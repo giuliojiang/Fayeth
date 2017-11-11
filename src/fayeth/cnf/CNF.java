@@ -7,16 +7,16 @@ import java.util.regex.Pattern;
 
 public class CNF {
     private final List<List<Integer>> clauses;
-    private final Set<Integer> literals;
+    private final Set<Integer> variables;
     private static final Pattern CNF_PATTERN = Pattern.compile("p cnf (\\d+) (\\d+)");
 
-    private CNF(List<List<Integer>> clauses, Set<Integer> literals) {
+    private CNF(List<List<Integer>> clauses, Set<Integer> variables) {
         this.clauses = clauses;
-        this.literals = literals;
+        this.variables = variables;
     }
 
-    public Set<Integer> getLiterals() {
-        return literals;
+    public Set<Integer> getVariables() {
+        return variables;
     }
 
     public List<List<Integer>> getClauses() {
@@ -27,7 +27,7 @@ public class CNF {
     public String toString() {
         return "CNF{" +
                 "clauses=" + clauses +
-                ", literals=" + literals +
+                ", variables=" + variables +
                 '}';
     }
 
@@ -44,7 +44,7 @@ public class CNF {
             throw new FileNotFoundException(path + " does not exist");
         }
         final BufferedReader bi = new BufferedReader(new FileReader(f));
-        String line;;
+        String line;
 
         // Skip all the initial comments that some queries have
         while((line = bi.readLine()) != null) {
@@ -65,7 +65,7 @@ public class CNF {
         final Integer numVariables = Integer.parseInt(m.group(1));
         final Integer numClauses = Integer.parseInt(m.group(2));
         final List<List<Integer>> clauses = new ArrayList<>(numClauses);
-        final Set<Integer> literals = new HashSet<>(numVariables);
+        final Set<Integer> variables = new HashSet<>(numVariables);
 
         while((line = bi.readLine()) != null) {
             if(line.startsWith("c")) continue;
@@ -76,12 +76,12 @@ public class CNF {
                     break;
                 Integer l = Integer.parseInt(s);
                 clause.add(l);
-                literals.add(Math.abs(l));
+                variables.add(Math.abs(l));
             }
             clauses.add(clause);
         }
         bi.close();
-        return new CNF(clauses, literals);
+        return new CNF(clauses, variables);
     }
 
     /**
@@ -92,7 +92,7 @@ public class CNF {
     public void toFile(String file) throws IOException {
         File f = new File(file);
         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-        bw.append(String.format("p cnf %d %d\n", literals.size(), clauses.size()));
+        bw.append(String.format("p cnf %d %d\n", variables.size(), clauses.size()));
         for(List<Integer> clause : clauses) {
             for(Integer i : clause) {
                 bw.append(i + " ");
