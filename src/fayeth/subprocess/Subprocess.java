@@ -39,13 +39,12 @@ public class Subprocess {
 
         // Create stdout loop thread
         this.stdoutRunner = new Thread(() -> {
-            Scanner stdout = new Scanner(process.getInputStream());
-
-            while (stdout.hasNextLine()) {
-                eventListener.onStdoutLine(stdout.nextLine());
-            }
-
+            Scanner stdout = null;
             try {
+                stdout = new Scanner(process.getInputStream());
+                while (stdout.hasNextLine()) {
+                    eventListener.onStdoutLine(stdout.nextLine());
+                }
                 int code = process.waitFor();
                 if (timeoutEnabled && code == 124) {
                     eventListener.onTimeout();
@@ -54,17 +53,27 @@ public class Subprocess {
                 }
             } catch (InterruptedException e) {
                 eventListener.onError(e);
+            } finally {
+                if (stdout != null) {
+                    stdout.close();
+                }
             }
-
         });
         stdoutRunner.start();
 
         // Create stderr loop thread
         this.stderrRunner = new Thread(() -> {
-            Scanner stderr = new Scanner(process.getErrorStream());
-
-            while (stderr.hasNextLine()) {
-                eventListener.onStderrLine(stderr.nextLine());
+            Scanner stderr = null;
+            try {
+                stderr = new Scanner(process.getErrorStream());
+                while (stderr.hasNextLine()) {
+                    eventListener.onStderrLine(stderr.nextLine());
+                }
+            }
+            finally {
+                if (stderr != null) {
+                    stderr.close();
+                }
             }
         });
         stderrRunner.start();
