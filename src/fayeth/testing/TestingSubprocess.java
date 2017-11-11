@@ -1,12 +1,11 @@
 package fayeth.testing;
 
-import fayeth.subprocess.Subprocess;
-import fayeth.subprocess.SubprocessListener;
-
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
+
+import fayeth.subprocess.Subprocess;
+import fayeth.subprocess.SubprocessListener;
 
 /**
  * This executable shows how to launch a subprocess using the
@@ -16,7 +15,7 @@ import java.util.List;
 public class TestingSubprocess {
 
     public static void main(String[] args) throws IOException, InterruptedException {
-        List<String> cmd = Collections.singletonList("free");
+        List<String> cmd = Arrays.asList("echo", "-n", "halo");
 
         Subprocess sp = new Subprocess(cmd, 1, new SubprocessListener() {
             @Override
