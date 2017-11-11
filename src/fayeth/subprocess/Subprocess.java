@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import fayeth.util.Log;
+
 public class Subprocess {
 
     private final Process process;
@@ -33,6 +35,7 @@ public class Subprocess {
 
         // Append rest of the command
         theCmd.addAll(cmd);
+        Log.info("Subprocess: running " + theCmd);
 
         // Execute command
         process = Runtime.getRuntime().exec(theCmd.toArray(new String[0]));

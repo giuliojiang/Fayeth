@@ -14,6 +14,8 @@ def run_cmd(cmd):
 exec_dir = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(exec_dir)
 
+run_cmd(['rm', '-rf', os.path.join(exec_dir, 'banosat')])
+
 # Clone banosat
 run_cmd(['git', 'clone', 'https://github.com/giuliojiang/Banosat', '--depth', '1', 'banosat'])
 
@@ -21,3 +23,4 @@ run_cmd(['git', 'clone', 'https://github.com/giuliojiang/Banosat', '--depth', '1
 bano_dir = os.path.abspath(os.path.join(exec_dir, "banosat"))
 os.chdir(bano_dir)
 run_cmd(['tar', 'vxf', os.path.abspath(os.path.join(exec_dir, 'scripts.tar.gz'))])
+run_cmd(['make'])
