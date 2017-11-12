@@ -9,7 +9,6 @@ import fayeth.engine.ub.strategies.random.RandomBrokenCNFStrategy;
 import fayeth.engine.ub.strategies.random.RandomStringStrategy;
 import fayeth.program.state.Args;
 import fayeth.util.Log;
-import sun.text.normalizer.UBiDiProps;
 
 public class UbEngine implements Engine {
 
