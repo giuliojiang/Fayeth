@@ -10,7 +10,7 @@ public class CNF {
     private final Set<Integer> variables;
     private static final Pattern CNF_PATTERN = Pattern.compile("p cnf (\\d+) (\\d+)");
 
-    private CNF(List<List<Integer>> clauses, Set<Integer> variables) {
+    public CNF(List<List<Integer>> clauses, Set<Integer> variables) {
         this.clauses = clauses;
         this.variables = variables;
     }

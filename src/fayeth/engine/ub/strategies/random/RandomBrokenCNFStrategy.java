@@ -4,11 +4,11 @@ import fayeth.engine.Outcome;
 import fayeth.engine.Strategy;
 import fayeth.engine.TestableInput;
 
-public class RandomStringStrategy implements Strategy {
+public class RandomBrokenCNFStrategy implements Strategy {
 
     @Override
     public TestableInput generateNextInput() {
-        return new RandomStringInput();
+        return new RandomBrokenCNFInput();
     }
 
     @Override

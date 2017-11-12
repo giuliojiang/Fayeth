@@ -1,20 +1,28 @@
 package fayeth.engine.ub;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import fayeth.engine.Engine;
 import fayeth.engine.Outcome;
 import fayeth.engine.Strategy;
 import fayeth.engine.TestableInput;
+import fayeth.engine.ub.strategies.random.RandomBrokenCNFStrategy;
 import fayeth.engine.ub.strategies.random.RandomStringStrategy;
 import fayeth.program.state.Args;
 import fayeth.util.Log;
+import sun.text.normalizer.UBiDiProps;
 
 public class UbEngine implements Engine {
 
     private Args arguments;
-    private Strategy strategy = new RandomStringStrategy();
+    private List<Strategy> strategies = new ArrayList<>();
 
+    public UbEngine() {
+        strategies.add(new RandomStringStrategy());
+        strategies.add(new RandomBrokenCNFStrategy());
+    }
     @Override
     public void setConfiguration(Args arguments) {
         Log.info("Setting up UbEngine with configuration " + arguments);
@@ -38,10 +46,12 @@ public class UbEngine implements Engine {
     private void runSequential() {
         try {
             while (true) {
-                TestableInput input = strategy.generateNextInput();
-                UbTask task = new UbTask(input, arguments, strategy);
-                Outcome outcome = task.run();
-                Log.info("A task is complete. Outcome is " + outcome);
+                for(Strategy strategy : strategies) {
+                    TestableInput input = strategy.generateNextInput();
+                    UbTask task = new UbTask(input, arguments, strategy);
+                    Outcome outcome = task.run();
+                    Log.info("A task is complete. Outcome is " + outcome);
+                }
             }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);
