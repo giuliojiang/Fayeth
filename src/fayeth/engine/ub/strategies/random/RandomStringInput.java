@@ -1,6 +1,5 @@
 package fayeth.engine.ub.strategies.random;
 
-import fayeth.cnf.CNF;
 import fayeth.engine.TestableInput;
 
 import java.util.Random;
@@ -23,11 +22,6 @@ public class RandomStringInput implements TestableInput {
             sb.append(b);
         }
         return sb.toString();
-    }
-
-    @Override
-    public CNF asCNF() {
-       return null;
     }
 
 }

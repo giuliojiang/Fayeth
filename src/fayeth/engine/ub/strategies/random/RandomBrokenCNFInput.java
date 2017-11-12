@@ -19,11 +19,6 @@ public class RandomBrokenCNFInput implements TestableInput {
 
     @Override
     public String asString() {
-        return "";
-    }
-
-    @Override
-    public CNF asCNF() {
         final int numClauses = random.nextInt(2048);
         final List<List<Integer>> clauses = new ArrayList<>();
         for(int i = 0; i < numClauses; i++) {
@@ -37,7 +32,7 @@ public class RandomBrokenCNFInput implements TestableInput {
         }
         // Empty is fine
         Set<Integer> vars = new HashSet<>(random.nextInt(300));
-        return new CNF(clauses, vars);
+        return new CNF(clauses, vars).asString();
     }
 
 }
