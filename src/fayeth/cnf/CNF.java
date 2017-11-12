@@ -84,13 +84,7 @@ public class CNF {
         return new CNF(clauses, variables);
     }
 
-    /**
-     * Creates a file from a CNF
-     * @param file path to the output file
-     * @throws IOException according to BufferedWriter
-     */
-    public void toFile(String file) throws IOException {
-        File f = new File(file);
+    public void toFile(File f) throws IOException {
         BufferedWriter bw = new BufferedWriter(new FileWriter(f));
         bw.append(String.format("p cnf %d %d\n", variables.size(), clauses.size()));
         for(List<Integer> clause : clauses) {
@@ -101,5 +95,14 @@ public class CNF {
         }
         bw.flush();
         bw.close();
+    }
+    
+    /**
+     * Creates a file from a CNF
+     * @param file path to the output file
+     * @throws IOException according to BufferedWriter
+     */
+    public void toFile(String path) throws IOException {
+        toFile(new File(path));
     }
 }
