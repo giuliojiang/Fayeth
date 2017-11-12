@@ -3,18 +3,14 @@ package fayeth.engine.ub.strategies.random;
 import fayeth.cnf.CNF;
 import fayeth.engine.TestableInput;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import java.util.Random;
+
 
 public class RandomStringInput implements TestableInput {
     final private Random random;
 
-    RandomStringInput(Long seed) {
-        this.random = new Random(seed);
-    }
-
-    RandomStringInput() {
-        this.random = new Random();
+    RandomStringInput(Random random) {
+        this.random = random;
     }
 
     @Override

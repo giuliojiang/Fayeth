@@ -4,11 +4,19 @@ import fayeth.engine.Outcome;
 import fayeth.engine.Strategy;
 import fayeth.engine.TestableInput;
 
+import java.util.Random;
+
 public class RandomBrokenCNFStrategy implements Strategy {
+
+    private final Random random;
+
+    public RandomBrokenCNFStrategy(Random random) {
+        this.random = random;
+    }
 
     @Override
     public TestableInput generateNextInput() {
-        return new RandomBrokenCNFInput();
+        return new RandomBrokenCNFInput(random);
     }
 
     @Override
