@@ -1,16 +1,25 @@
 package fayeth.cnf;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class CNF {
+import fayeth.engine.TestableInput;
+
+public class CNF implements TestableInput {
     private final List<List<Integer>> clauses;
     private final Set<Integer> variables;
     private static final Pattern CNF_PATTERN = Pattern.compile("p cnf (\\d+) (\\d+)");
 
-    private CNF(List<List<Integer>> clauses, Set<Integer> variables) {
+    public CNF(List<List<Integer>> clauses, Set<Integer> variables) {
         this.clauses = clauses;
         this.variables = variables;
     }
@@ -84,25 +93,19 @@ public class CNF {
         return new CNF(clauses, variables);
     }
 
-    public void toFile(File f) throws IOException {
-        BufferedWriter bw = new BufferedWriter(new FileWriter(f));
-        bw.append(String.format("p cnf %d %d\n", variables.size(), clauses.size()));
+    /**
+     * Creates a file string representation from a CNF
+     */
+    @Override
+    public String asString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("p cnf %d %d\n", variables.size(), clauses.size()));
         for(List<Integer> clause : clauses) {
             for(Integer i : clause) {
-                bw.append(i + " ");
+                sb.append(i + " ");
             }
-            bw.append("0\n");
+            sb.append("0\n");
         }
-        bw.flush();
-        bw.close();
-    }
-    
-    /**
-     * Creates a file from a CNF
-     * @param file path to the output file
-     * @throws IOException according to BufferedWriter
-     */
-    public void toFile(String path) throws IOException {
-        toFile(new File(path));
+        return sb.toString();
     }
 }

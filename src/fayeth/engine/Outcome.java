@@ -32,7 +32,7 @@ public class Outcome {
 
     @Override
     public String toString() {
-        return "Outcome [input=" + input.asString() + ", strategy=" + strategy.getClass().getName() + ", bugDescription=" + bugDescription + "]";
+        return "Outcome [strategy=" + strategy.getClass().getName() + ", bugDescription=" + bugDescription + "]";
     }
     
     
