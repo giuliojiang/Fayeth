@@ -26,12 +26,8 @@ public class Subprocess {
         this.timeoutEnabled = timeout > 0;
 
         // Turn off pipe buffering. Solves issues when using `timeout` to kill the subprocess
-        // stdbuf -i0 -o0 -e0
         // See https://unix.stackexchange.com/a/194565 for details
-        theCmd.add("stdbuf");
-        theCmd.add("-i0");
-        theCmd.add("-o0");
-        theCmd.add("-e0");
+        theCmd.add("unbuffer");
 
         // Append rest of the command
         theCmd.addAll(cmd);
