@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class RandomBrokenCNFInput implements TestableInput {
     final private Random random;
@@ -30,8 +31,9 @@ public class RandomBrokenCNFInput implements TestableInput {
             clauses.add(randomClause);
 
         }
-        // Empty is fine
-        Set<Integer> vars = new HashSet<>(random.nextInt(300));
+        int numVars = random.nextInt(300);
+        Set<Integer> vars = IntStream.range(-1, numVars).boxed().collect(Collectors.toSet());
+
         return new CNF(clauses, vars).asString();
     }
 
