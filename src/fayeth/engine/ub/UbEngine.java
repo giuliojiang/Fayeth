@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import fayeth.engine.*;
+import fayeth.engine.ub.strategies.random.RandomCorrectCNFStrategy;
 import fayeth.engine.ub.strategies.random.RandomBrokenCNFStrategy;
 import fayeth.engine.ub.strategies.random.RandomStringStrategy;
 import fayeth.program.state.Args;
@@ -22,6 +23,7 @@ public class UbEngine implements Engine {
         RandomFactory randomFactory = new RandomFactory(arguments.getSeed());
         strategies.add(new RandomStringStrategy(randomFactory.newRandom()));
         strategies.add(new RandomBrokenCNFStrategy(randomFactory.newRandom()));
+        strategies.add(new RandomCorrectCNFStrategy(randomFactory.newRandom()));
     }
     
     @Override
