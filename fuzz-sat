@@ -40,6 +40,9 @@ if len(args) >= 4:
 else:
 	seed = None
 
+# Setup environment variables
+os.environ["LIBC_FATAL_STDERR_"] = "1"
+
 # Construct command
 cmd = []
 cmd.append("java")
