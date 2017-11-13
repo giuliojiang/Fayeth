@@ -30,7 +30,7 @@ public class UbEngine implements Engine {
             throw new RuntimeException("No configuration for UbEngine. Please call setConfiguration first");
         }
         
-        if (arguments.isMultithreadingAllowed()) {
+        if (arguments.isThreadingEnabled()) {
             // TODO add multithreaded supportc
             throw new RuntimeException("Multithreading is not supported yet. Please provide a fixed seed for reproducibility");
         } else {
@@ -40,7 +40,8 @@ public class UbEngine implements Engine {
 
     private void runSequential() {
         try {
-            while (true) {
+            int limit = arguments.getLimit();
+            for (long i = 0; limit == 0 || i < limit; i++) {
                 for(Strategy strategy : strategies) {
                     TestableInput input = strategy.generateNextInput();
                     UbTask task = new UbTask(input, arguments, strategy);

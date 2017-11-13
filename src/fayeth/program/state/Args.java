@@ -32,12 +32,20 @@ public class Args {
         return seed;
     }
 
-    public boolean isMultithreadingAllowed() {
-        return seed == null;
-    }
-
     public Mode getMode() {
         return mode;
+    }
+    
+    public boolean isThreadingEnabled() {
+        return !"1".equals(System.getenv("FAYETH_NOTHREADING"));
+    }
+    
+    public boolean isGcDisabled() {
+        return "1".equals(System.getenv("FAYETH_NOGC"));
+    }
+    
+    public int getLimit() {
+        return Integer.parseInt(System.getenv("FAYETH_LIMIT"));
     }
 
     @Override

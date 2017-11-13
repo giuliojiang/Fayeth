@@ -3,26 +3,66 @@
 import sys
 import subprocess
 import os
+import argparse
 
 # Fayeth/
 exec_dir = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
 
-# Get arguments
-args = sys.argv[1:]
+# Argument parsing
 
-# Check arguments length
-if len(args) < 3:
-	print("Usage: ./fuzz-sat <sut-executable> <input-files-dir> <ub/func> [seed]")
-	print("Example: ./fuzz-sat res/banosat/sat . ub 645")
-	sys.exit(1)
+def usage_msg():
+    return '''Help: ./fuzz-sat -h
+Example: ./fuzz-sat res/banosat/sat . ub 645 --nothreading --limit 10
+'''
+
+parser = argparse.ArgumentParser(usage=usage_msg())
+
+parser.add_argument('sutexecutable',
+                    help='Path to the sat executable under test'
+                    )
+
+parser.add_argument('inputfilesdir',
+                    help='Path to directory containing seed cnf files'
+                    )
+
+parser.add_argument('ubfunc',
+                    help='Operation mode. [ub/func]',
+                    choices=['ub', 'func']
+                    )
+
+parser.add_argument('seed',
+                    help='Random number generation seed',
+                    nargs='?',
+                    default=None
+                    )
+
+parser.add_argument('--nothreading',
+                    help='Disable multithreading',
+                    action='store_true',
+                    default=False
+                    )
+
+parser.add_argument('--nogc',
+                    help='Disable garbage collection of temporary generated file in /tmp',
+                    action='store_true',
+                    default=False
+                    )
+
+parser.add_argument('--limit',
+                    help='Set a limit to the number of iterations. If not set, the fuzzer will run infinitely',
+                    type=int,
+                    default=0
+                    )
+
+args = parser.parse_args()
 
 # SUT path
-sut_path = os.path.abspath(args[0])
+sut_path = os.path.abspath(args.sutexecutable)
 sut_path = os.path.abspath(os.path.dirname(sut_path))
 os.chdir(sut_path)
 	
 # Input directory
-input_dir = os.path.abspath(args[1])
+input_dir = os.path.abspath(args.inputfilesdir)
 
 # Output directory
 output_dir = os.path.abspath(os.path.join(exec_dir, "fuzzed-tests"))
@@ -32,16 +72,16 @@ subprocess.call(["rm", "-rf", output_dir], shell=False)
 subprocess.call(["mkdir", output_dir], shell=False)
 
 # Mode
-mode = args[2]
+mode = args.ubfunc
 
 # Seed
-if len(args) >= 4:
-	seed = args[3]
-else:
-	seed = None
+seed = args.seed
 
 # Setup environment variables
 os.environ["LIBC_FATAL_STDERR_"] = "1"
+os.environ["FAYETH_NOTHREADING"] = "1" if args.nothreading else "0"
+os.environ["FAYETH_NOGC"]        = "1" if args.nogc else "0"
+os.environ["FAYETH_LIMIT"]       = str(args.limit)
 
 # Construct command
 cmd = []

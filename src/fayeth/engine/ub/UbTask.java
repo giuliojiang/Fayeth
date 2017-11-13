@@ -57,7 +57,9 @@ public class UbTask implements Task {
         sp.waitFor();
         
         // Cleanup
-        tempFile.delete();
+        if (!arguments.isGcDisabled()) {
+            tempFile.delete();
+        }
         
         return outcome;
     }
