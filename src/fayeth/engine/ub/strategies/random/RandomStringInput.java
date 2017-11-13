@@ -16,10 +16,11 @@ public class RandomStringInput implements TestableInput {
     public String asString() {
         final int length = random.nextInt(2048);
         final StringBuilder sb = new StringBuilder();
+
         final byte[] randomBytes = new byte[length];
         random.nextBytes(randomBytes);
         for(byte b : randomBytes) {
-            sb.append(b);
+            sb.append((char)b);
         }
         return sb.toString();
     }
