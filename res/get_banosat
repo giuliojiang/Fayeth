@@ -4,20 +4,18 @@ import sys
 import subprocess
 import os
 
-def run_cmd(cmd):
+def run_cmd(cmd, required=True):
     code = subprocess.call(cmd, shell=False)
     if code != 0:
-        sys.exit(1)
+        sys.exit(1 if required else 0)
     return
 
 # Fayeth/res/
 exec_dir = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
 os.chdir(exec_dir)
 
-run_cmd(['rm', '-rf', os.path.join(exec_dir, 'banosat')])
-
-# Clone banosat
-run_cmd(['git', 'clone', 'https://github.com/giuliojiang/Banosat', '--depth', '1', 'banosat'])
+# Clone banosat if not exists
+run_cmd(['git', 'clone', 'https://github.com/giuliojiang/Banosat', '--depth', '1', 'banosat'], required=False)
 
 # Extract scripts
 bano_dir = os.path.abspath(os.path.join(exec_dir, "banosat"))
