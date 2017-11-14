@@ -9,28 +9,40 @@ import java.util.regex.Pattern;
 public class UbOutputListener implements SubprocessListener {
 
     private UbTask ubTask;
-
+    private boolean hasFailed = false;
     public UbOutputListener(UbTask ubTask) {
         this.ubTask = ubTask;
     }
 
     @Override
     public void onStdoutLine(String line) {
-        Log.info("STDOUT:" + line);
-        // ASAN ERROR
+        // ASAN error
         Pattern pattern = Pattern.compile(".*ERROR: AddressSanitizer: ([a-zA-Z_0-9-]+) .*");
         Matcher matcher = pattern.matcher(line);
         if(matcher.matches()) {
+            hasFailed = true;
             ubTask.onBugFound(String.format("AddressSanitizer: %s", matcher.group(1)));
-            System.out.println(matcher.group(1));
             return;
         }
-        // UBSAN ERROR
-        pattern = Pattern.compile(".*?: runtime error: (.*?)");
+        // ASAN allocation failure
+        pattern = Pattern.compile(".*AddressSanitizer's (.*?)");
+        matcher = pattern.matcher(line);
         if(matcher.matches()) {
-            ubTask.onBugFound(String.format("UBSanitizer: %s", matcher.group(1)));
+            hasFailed = true;
+            ubTask.onBugFound(String.format("AddressSanitizer: Failure: %s", matcher.group(1)));
+            return;
         }
-
+        // UBSAN error
+        pattern = Pattern.compile(".*?: runtime error: (.*?)");
+        matcher = pattern.matcher(line);
+        if(matcher.matches()) {
+            hasFailed = true;
+            ubTask.onBugFound(String.format("UBSanitizer: %s", matcher.group(1)));
+            return;
+        }
+        if(!hasFailed) {
+            Log.info("STDOUT:" + line);
+        }
     }
 
     @Override
