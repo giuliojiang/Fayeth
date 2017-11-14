@@ -9,40 +9,20 @@ import java.util.regex.Pattern;
 public class UbOutputListener implements SubprocessListener {
 
     private UbTask ubTask;
-    private boolean hasFailed = false;
     public UbOutputListener(UbTask ubTask) {
         this.ubTask = ubTask;
     }
 
+
     @Override
     public void onStdoutLine(String line) {
+        Log.info("STDOUT:" + line);
         // ASAN error
-        Pattern pattern = Pattern.compile(".*ERROR: AddressSanitizer: ([a-zA-Z_0-9-]+) .*");
-        Matcher matcher = pattern.matcher(line);
-        if(matcher.matches()) {
-            hasFailed = true;
-            ubTask.onBugFound(String.format("AddressSanitizer: %s", matcher.group(1)));
-            return;
-        }
-        // ASAN allocation failure
-        pattern = Pattern.compile(".*AddressSanitizer's (.*?)");
-        matcher = pattern.matcher(line);
-        if(matcher.matches()) {
-            hasFailed = true;
-            ubTask.onBugFound(String.format("AddressSanitizer: Failure: %s", matcher.group(1)));
-            return;
-        }
+        if (matchError(line, ".*ERROR: AddressSanitizer: ([a-zA-Z_0-9-]+) .*", "AddressSanitizer:", 1)) return;
+        // ASAN alloc failure
+        if (matchError(line, ".*AddressSanitizer's (.*?)", "AddressSanitizer: Failure:", 1)) return;
         // UBSAN error
-        pattern = Pattern.compile(".*?: runtime error: (.*?)");
-        matcher = pattern.matcher(line);
-        if(matcher.matches()) {
-            hasFailed = true;
-            ubTask.onBugFound(String.format("UBSanitizer: %s", matcher.group(1)));
-            return;
-        }
-        if(!hasFailed) {
-            Log.info("STDOUT:" + line);
-        }
+        if (matchError(line, ".*?: runtime error: (.*?)", "UBSanitizer:", 1)) return;
     }
 
     @Override
@@ -66,6 +46,16 @@ public class UbOutputListener implements SubprocessListener {
     public void onError(Throwable t) {
         Log.info("ERROR");
         ubTask.onCompletion();
+    }
+
+    private boolean matchError(String line, String errPattern, String errOutPrefix, int errMatchGroup) {
+        Pattern pattern = Pattern.compile(errPattern);
+        Matcher matcher = pattern.matcher(line);
+        if(matcher.matches()) {
+            ubTask.onBugFound(String.format("%s %s", errOutPrefix, matcher.group(errMatchGroup)));
+            return true;
+        }
+        return false;
     }
 
 }
