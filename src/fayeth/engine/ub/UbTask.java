@@ -35,7 +35,7 @@ public class UbTask implements Task {
     }
     
     public void onBugFound(String bugDescription) {
-        outcome.setBugDescription(bugDescription);
+        outcome.addBugDescription(bugDescription);
     }
 
     @Override
