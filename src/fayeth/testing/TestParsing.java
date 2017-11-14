@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import fayeth.cnf.CNF;
 import fayeth.util.Log;
-import fayeth.util.TempFile;
+import fayeth.util.FileUtil;
 
 public class TestParsing {
 
@@ -13,7 +13,7 @@ public class TestParsing {
         String fname = "src/TEST/test1.cnf";
         CNF cnf = CNF.fromFile(fname);
         System.out.println(cnf);
-        File f = TempFile.writeTemporaryFile(cnf);
+        File f = FileUtil.writeTemporaryFile(cnf);
         Log.info("Written to " + f.getAbsolutePath());
     }
 }
