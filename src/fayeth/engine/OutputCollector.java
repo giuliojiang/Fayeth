@@ -92,7 +92,7 @@ public class OutputCollector {
     
     public void collect(Outcome outcome) throws IOException {
         // Add
-        String bugDescription = outcome.getBugDescription();
+        String bugDescription = outcome.getBugDescriptionsAsString();
         if (bugDescription == null) {
             // Do not write to output if there was no bug at all
             return;
