@@ -7,16 +7,27 @@ import java.util.Random;
 
 import fayeth.engine.TestableInput;
 
-public class TempFile {
+public class FileUtil {
 
     private static final String TEMP_DIR = "/tmp/";
     private static final Random rand = new Random();
 
-    public static synchronized File writeTemporaryFile(TestableInput input) throws IOException {
-        File tempFile = createTemporaryFile();
-        PrintWriter pw = new PrintWriter(tempFile);
+    public static synchronized void writeToFile(TestableInput input, File file) throws IOException {
+        file.createNewFile();
+        PrintWriter pw = new PrintWriter(file);
         pw.print(input.asString());
         pw.close();
+    }
+    
+    public static synchronized File writeToFile(TestableInput input, String filePath) throws IOException {
+        File file = new File(filePath);
+        writeToFile(input, file);
+        return file;
+    }
+    
+    public static synchronized File writeTemporaryFile(TestableInput input) throws IOException {
+        File tempFile = createTemporaryFile();
+        writeToFile(input, tempFile);
         return tempFile;
     }
 

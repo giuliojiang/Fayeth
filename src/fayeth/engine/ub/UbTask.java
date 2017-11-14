@@ -12,7 +12,7 @@ import fayeth.engine.Task;
 import fayeth.engine.TestableInput;
 import fayeth.program.state.Args;
 import fayeth.subprocess.Subprocess;
-import fayeth.util.TempFile;
+import fayeth.util.FileUtil;
 
 public class UbTask implements Task {
 
@@ -47,7 +47,7 @@ public class UbTask implements Task {
         UbOutputListener listener = new UbOutputListener(this);
         
         // Write a temporary input file
-        File tempFile = TempFile.writeTemporaryFile(testableInput);
+        File tempFile = FileUtil.writeTemporaryFile(testableInput);
         
         // Run the SAT solver
         List<String> cmd = new ArrayList<>();

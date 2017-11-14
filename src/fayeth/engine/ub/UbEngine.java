@@ -13,6 +13,7 @@ import fayeth.util.Log;
 
 public class UbEngine implements Engine {
 
+    private OutputCollector outputCollector;
     private Args arguments;
     private List<Strategy> strategies = new ArrayList<>();
 
@@ -24,6 +25,8 @@ public class UbEngine implements Engine {
         strategies.add(new RandomStringStrategy(randomFactory.newRandom()));
         strategies.add(new RandomBrokenCNFStrategy(randomFactory.newRandom()));
         strategies.add(new RandomCorrectCNFStrategy(randomFactory.newRandom()));
+        
+        this.outputCollector = new OutputCollector(arguments);
     }
     
     @Override
@@ -43,12 +46,18 @@ public class UbEngine implements Engine {
     private void runSequential() {
         try {
             int limit = arguments.getLimit();
-            for (long i = 0; limit == 0 || i < limit; i++) {
+            long i = 0;
+            while (true) {
                 for(Strategy strategy : strategies) {
+                    if (limit != 0 && i >= limit) {
+                        return;
+                    }
                     TestableInput input = strategy.generateNextInput();
                     UbTask task = new UbTask(input, arguments, strategy);
                     Outcome outcome = task.run();
+                    outputCollector.collect(outcome);
                     Log.info("A task is complete. Outcome is " + outcome);
+                    i++;
                 }
             }
         } catch (IOException | InterruptedException e) {
