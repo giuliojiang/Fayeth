@@ -16,13 +16,15 @@ public class UbOutputListener implements SubprocessListener {
 
     @Override
     public void onStdoutLine(String line) {
-        Log.info("STDOUT:" + line);
+        //  Log.info("STDOUT:" + line);
         // ASAN error
         if (matchError(line, ".*ERROR: AddressSanitizer: ([a-zA-Z_0-9-]+) .*", "AddressSanitizer:", 1)) return;
         // ASAN alloc failure
         if (matchError(line, ".*AddressSanitizer's (.*?)", "AddressSanitizer: Failure:", 1)) return;
         // UBSAN error
         if (matchError(line, ".*?: runtime error: (.*?)", "UBSanitizer:", 1)) return;
+        // Process abortion
+        if (matchError(line, ".*? Abort (.*?)", "Process abort:", 1)) return;
     }
 
     @Override
