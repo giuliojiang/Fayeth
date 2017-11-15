@@ -22,10 +22,15 @@ public class UbEngine implements Engine {
         Log.info("Setting up UbEngine with configuration " + arguments);
         this.arguments = arguments;
         RandomFactory randomFactory = new RandomFactory(arguments.getSeed());
+        Log.info("Seed used is: " + randomFactory.getSeed());
         strategies.add(new RandomStringStrategy(randomFactory.newRandom()));
         strategies.add(new RandomBrokenCNFStrategy(randomFactory.newRandom()));
         strategies.add(new RandomCorrectCNFStrategy(randomFactory.newRandom()));
-        
+        Log.info("Using the following strategies:");
+        for (Strategy s : strategies) {
+            Log.info("\t" + s.getClass().getSimpleName());
+        }
+
         this.outputCollector = new OutputCollector(arguments);
     }
     

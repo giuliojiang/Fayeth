@@ -16,4 +16,9 @@ public class RandomFactory {
     public Random newRandom() {
         return new Random(seed++);
     }
+
+    public Long getSeed() {
+        return seed;
+    }
+
 }
