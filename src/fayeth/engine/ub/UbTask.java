@@ -31,11 +31,11 @@ public class UbTask implements Task {
     }
     
     public void onCompletion() {
-        outcome.setBugDescription(null);
+        //outcome.setBugDescription(null);
     }
     
     public void onBugFound(String bugDescription) {
-        outcome.setBugDescription(bugDescription);
+        outcome.addBugDescription(bugDescription);
     }
 
     @Override

@@ -1,11 +1,18 @@
 package fayeth.engine;
 
+import java.util.LinkedList;
+import java.util.List;
+
 public class Outcome {
 
     private TestableInput input;
     private Strategy strategy;
-    private String bugDescription;
-    
+    private List<String> bugDescriptions;
+
+    public Outcome() {
+        this.bugDescriptions = new LinkedList<>();
+    }
+
     public TestableInput getInput() {
         return input;
     }
@@ -14,8 +21,12 @@ public class Outcome {
         return strategy;
     }
 
-    public String getBugDescription() {
-        return bugDescription;
+    public List<String> getBugDescriptions() {
+        return bugDescriptions;
+    }
+
+    public String getBugDescriptionsAsString() {
+        return String.join(", ", bugDescriptions);
     }
 
     public void setInput(TestableInput input) {
@@ -26,13 +37,13 @@ public class Outcome {
         this.strategy = strategy;
     }
 
-    public void setBugDescription(String bugDescription) {
-        this.bugDescription = bugDescription;
+    public void addBugDescription(String bugDescription) {
+        bugDescriptions.add(bugDescription);
     }
 
     @Override
     public String toString() {
-        return "Outcome [strategy=" + strategy.getClass().getName() + ", bugDescription=" + bugDescription + "]";
+        return "Outcome [strategy=" + strategy.getClass().getName() + ", bugDescriptions=[" + getBugDescriptionsAsString() + "]]";
     }
     
     
