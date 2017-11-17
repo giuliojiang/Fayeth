@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import fayeth.cnf.CNF;
@@ -15,6 +16,7 @@ import fayeth.engine.RandomFactory;
 import fayeth.engine.Strategy;
 import fayeth.engine.TestableInput;
 import fayeth.engine.func.strategies.NullStrategy;
+import fayeth.engine.func.strategies.ShuffleLiteralsStrategy;
 import fayeth.program.state.Args;
 import fayeth.util.Log;
 
@@ -31,21 +33,22 @@ public class FuncEngine implements Engine {
         this.arguments = arguments;
         RandomFactory randomFactory = new RandomFactory(arguments.getSeed());
         Log.info("Seed used is: " + randomFactory.getSeed());
-        
-        strategies.add(new NullStrategy());
+
+        // Parse existing CNFs from input directory
+        File inputDirectory = new File(arguments.getInputPath());
+        this.initialFormulae = Arrays.stream(inputDirectory.listFiles())
+                .filter(f -> f.getName().endsWith(".cnf"))
+                .map(CNF::fromFile).collect(Collectors.toList());
+
+        strategies.add(new ShuffleLiteralsStrategy(randomFactory.newRandom(), initialFormulae));
+
         Log.info("Using the following strategies:");
         for (Strategy s : strategies) {
             Log.info("\t" + s.getClass().getSimpleName());
         }
 
         this.outputCollector = new OutputCollector(arguments);
-        
-        // Parse existing CNFs from input directory
-        File inputDirectory = new File(arguments.getInputPath());
-        this.initialFormulae = Arrays.stream(inputDirectory.listFiles())
-                .filter(f -> f.getName().endsWith(".cnf"))
-                .map(CNF::fromFile).collect(Collectors.toList());
-        initialFormulae.forEach(System.out::println);
+
     }
 
     @Override
