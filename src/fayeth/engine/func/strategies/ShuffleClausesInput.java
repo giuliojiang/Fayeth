@@ -2,6 +2,7 @@ package fayeth.engine.func.strategies;
 
 import fayeth.cnf.CNF;
 import fayeth.engine.Expectation;
+import fayeth.engine.Satisfiability;
 import fayeth.engine.TestableInput;
 
 import java.util.ArrayList;
@@ -26,4 +27,8 @@ public class ShuffleClausesInput implements TestableInput {
         return new CNF(shuffledClauses, cnf.getVariables()).asString();
     }
 
+    @Override
+    public Expectation getExpectation() {
+        return new Expectation(Satisfiability.SAT, Satisfiability.UNSAT);
+    }
 }
