@@ -7,6 +7,7 @@ import java.util.List;
 import fayeth.engine.*;
 import fayeth.engine.ub.strategies.random.RandomCorrectCNFStrategy;
 import fayeth.engine.ub.strategies.random.RandomBrokenCNFStrategy;
+import fayeth.engine.ub.strategies.random.RandomSemiCNFStringStrategy;
 import fayeth.engine.ub.strategies.random.RandomStringStrategy;
 import fayeth.program.state.Args;
 import fayeth.util.Log;
@@ -24,6 +25,7 @@ public class UbEngine implements Engine {
         RandomFactory randomFactory = new RandomFactory(arguments.getSeed());
         Log.info("Seed used is: " + randomFactory.getSeed());
         strategies.add(new RandomStringStrategy(randomFactory.newRandom()));
+        strategies.add(new RandomSemiCNFStringStrategy(randomFactory.newRandom()));
         strategies.add(new RandomBrokenCNFStrategy(randomFactory.newRandom()));
         strategies.add(new RandomCorrectCNFStrategy(randomFactory.newRandom()));
         Log.info("Using the following strategies:");
