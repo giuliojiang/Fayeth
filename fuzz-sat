@@ -59,20 +59,22 @@ args = parser.parse_args()
 # SUT path
 sut_path = os.path.abspath(args.sutexecutable)
 sut_path = os.path.abspath(os.path.dirname(sut_path))
-os.chdir(sut_path)
 	
 # Input directory
 input_dir = os.path.abspath(args.inputfilesdir)
 
+# Mode
+mode = args.ubfunc
+
 # Output directory
-output_dir = os.path.abspath(os.path.join(exec_dir, "fuzzed-tests"))
+if mode == 'ub':
+    output_dir = os.path.abspath(os.path.join(exec_dir, "fuzzed-tests"))
+else:
+    output_dir = os.path.abspath(os.path.join(exec_dir, "follow-up-tests"))
 # Clear output directory
 subprocess.call(["rm", "-rf", output_dir], shell=False)
 # Recreate
 subprocess.call(["mkdir", output_dir], shell=False)
-
-# Mode
-mode = args.ubfunc
 
 # Seed
 seed = args.seed
@@ -97,6 +99,7 @@ if seed is not None:
 	cmd.append(seed)
 
 # Run command
+os.chdir(sut_path)
 code = subprocess.call(cmd, shell=False)
 
 # Exit

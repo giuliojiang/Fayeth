@@ -1,6 +1,7 @@
 package fayeth.program;
 
 import fayeth.engine.Engine;
+import fayeth.engine.func.FuncEngine;
 import fayeth.engine.ub.UbEngine;
 import fayeth.program.state.Args;
 import fayeth.program.state.Mode;
@@ -24,7 +25,7 @@ public class Main {
         if (arguments.getMode() == Mode.UNDEF) {
             return new UbEngine();
         } else {
-            throw new RuntimeException("Mode ["+arguments.getMode()+"] is currently unsupported");
+            return new FuncEngine();
         }
     }
     
