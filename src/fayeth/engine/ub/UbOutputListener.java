@@ -44,12 +44,6 @@ public class UbOutputListener implements SubprocessListener {
         ubTask.onCompletion();
     }
 
-    @Override
-    public void onError(Throwable t) {
-        Log.info("ERROR");
-        ubTask.onCompletion();
-    }
-
     private boolean matchError(String line, String errPattern, String errOutPrefix, int errMatchGroup) {
         Pattern pattern = Pattern.compile(errPattern);
         Matcher matcher = pattern.matcher(line);

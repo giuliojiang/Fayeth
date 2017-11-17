@@ -40,6 +40,56 @@ public class CNF implements TestableInput {
                 '}';
     }
 
+    public static CNF fromFile(File f) {
+        
+        try {
+            if(!f.exists()) {
+                throw new FileNotFoundException(f.getAbsolutePath() + " does not exist");
+            }
+            final BufferedReader bi = new BufferedReader(new FileReader(f));
+            String line;
+
+            // Skip all the initial comments that some queries have
+            while((line = bi.readLine()) != null) {
+                if(line.startsWith("c")) continue;
+                if(line.startsWith("p")) {
+                    break;
+                }
+            }
+            if(line == null) {
+                bi.close();
+                throw new IllegalArgumentException("File " + f +  " did not contain a valid CNF formula");
+            }
+            Matcher m = CNF_PATTERN.matcher(line);
+            if(!m.matches()) {
+                bi.close();
+                throw new IllegalArgumentException("File is not in CNF format: " + line);
+            }
+            final Integer numVariables = Integer.parseInt(m.group(1));
+            final Integer numClauses = Integer.parseInt(m.group(2));
+            final List<List<Integer>> clauses = new ArrayList<>(numClauses);
+            final Set<Integer> variables = new HashSet<>(numVariables);
+
+            while((line = bi.readLine()) != null) {
+                if(line.startsWith("c")) continue;
+                List<Integer> clause = new ArrayList<>();
+                String[] splitSep = line.split("\\s");
+                for(String s : splitSep) {
+                    if(s.equals("0"))
+                        break;
+                    Integer l = Integer.parseInt(s);
+                    clause.add(l);
+                    variables.add(Math.abs(l));
+                }
+                clauses.add(clause);
+            }
+            bi.close();
+            return new CNF(clauses, variables);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
     /**
      * Initialises a new CNF formula from a file
      * @param path path to the file that contains the formula
@@ -47,50 +97,8 @@ public class CNF implements TestableInput {
      * @throws IOException if the file does not exist
      * @throws RuntimeException if the file is not in CNF format
      */
-    public static CNF fromFile(String path) throws IOException {
-        final File f = new File(path);
-        if(!f.exists()) {
-            throw new FileNotFoundException(path + " does not exist");
-        }
-        final BufferedReader bi = new BufferedReader(new FileReader(f));
-        String line;
-
-        // Skip all the initial comments that some queries have
-        while((line = bi.readLine()) != null) {
-            if(line.startsWith("c")) continue;
-            if(line.startsWith("p")) {
-                break;
-            }
-        }
-        if(line == null) {
-            bi.close();
-            throw new IllegalArgumentException("File did not contain a valid CNF formula");
-        }
-        Matcher m = CNF_PATTERN.matcher(line);
-        if(!m.matches()) {
-            bi.close();
-            throw new IllegalArgumentException("File is not in CNF format: " + line);
-        }
-        final Integer numVariables = Integer.parseInt(m.group(1));
-        final Integer numClauses = Integer.parseInt(m.group(2));
-        final List<List<Integer>> clauses = new ArrayList<>(numClauses);
-        final Set<Integer> variables = new HashSet<>(numVariables);
-
-        while((line = bi.readLine()) != null) {
-            if(line.startsWith("c")) continue;
-            List<Integer> clause = new ArrayList<>();
-            String[] splitSep = line.split("\\s");
-            for(String s : splitSep) {
-                if(s.equals("0"))
-                    break;
-                Integer l = Integer.parseInt(s);
-                clause.add(l);
-                variables.add(Math.abs(l));
-            }
-            clauses.add(clause);
-        }
-        bi.close();
-        return new CNF(clauses, variables);
+    public static CNF fromFile(String path) {
+        return fromFile(new File(path));
     }
 
     /**

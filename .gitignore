@@ -4,3 +4,4 @@ out
 *.class
 fuzzed-tests
 .idea
+follow-up-tests

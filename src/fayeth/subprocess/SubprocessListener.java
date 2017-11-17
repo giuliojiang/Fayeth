@@ -1,5 +1,7 @@
 package fayeth.subprocess;
 
+import fayeth.util.Log;
+
 public interface SubprocessListener {
 
     void onStdoutLine(String line);
@@ -10,6 +12,8 @@ public interface SubprocessListener {
 
     void onTimeout();
 
-    void onError(Throwable t);
+    default void onError(Throwable t) {
+        Log.error("Error in ["+this.getClass().getSimpleName()+"]", t);
+    }
 
 }
