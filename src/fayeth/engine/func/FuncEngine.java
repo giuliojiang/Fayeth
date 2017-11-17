@@ -16,6 +16,7 @@ import fayeth.engine.RandomFactory;
 import fayeth.engine.Strategy;
 import fayeth.engine.TestableInput;
 import fayeth.engine.func.strategies.NullStrategy;
+import fayeth.engine.func.strategies.ShuffleClausesStrategy;
 import fayeth.engine.func.strategies.ShuffleLiteralsStrategy;
 import fayeth.program.state.Args;
 import fayeth.util.Log;
@@ -41,6 +42,7 @@ public class FuncEngine implements Engine {
                 .map(CNF::fromFile).collect(Collectors.toList());
 
         strategies.add(new ShuffleLiteralsStrategy(randomFactory.newRandom(), initialFormulae));
+        strategies.add(new ShuffleClausesStrategy(randomFactory.newRandom(), initialFormulae));
 
         Log.info("Using the following strategies:");
         for (Strategy s : strategies) {
