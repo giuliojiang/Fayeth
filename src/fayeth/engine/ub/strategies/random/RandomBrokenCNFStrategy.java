@@ -6,7 +6,7 @@ import fayeth.engine.TestableInput;
 
 import java.util.Random;
 
-public class RandomBrokenCNFStrategy implements Strategy {
+public class RandomBrokenCNFStrategy implements Strategy<TestableInput> {
 
     private final Random random;
 
@@ -20,7 +20,7 @@ public class RandomBrokenCNFStrategy implements Strategy {
     }
 
     @Override
-    public void recordOutcome(Outcome outcome) {
+    public void recordOutcome(Outcome<TestableInput> outcome) {
         // Does nothing
     }
 

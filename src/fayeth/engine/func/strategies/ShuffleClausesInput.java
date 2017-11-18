@@ -1,15 +1,15 @@
 package fayeth.engine.func.strategies;
 
-import fayeth.cnf.CNF;
-import fayeth.engine.Expectation;
-import fayeth.engine.Satisfiability;
-import fayeth.engine.TestableInput;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class ShuffleClausesInput implements TestableInput {
+import fayeth.cnf.CNF;
+import fayeth.engine.Expectation;
+import fayeth.engine.Satisfiability;
+import fayeth.engine.func.FuncTestableInput;
+
+public class ShuffleClausesInput implements FuncTestableInput {
 
     private final Random random;
     private final CNF cnf;
@@ -30,5 +30,10 @@ public class ShuffleClausesInput implements TestableInput {
     @Override
     public Expectation getExpectation() {
         return new Expectation(Satisfiability.SAT, Satisfiability.UNSAT);
+    }
+
+    @Override
+    public String getGenesisFileName() {
+        return cnf.getSourceFileName();
     }
 }

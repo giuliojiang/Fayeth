@@ -1,11 +1,11 @@
 package fayeth.engine;
 
-public interface Strategy {
+public interface Strategy<Tinput> {
 
-    TestableInput generateNextInput();
+    Tinput generateNextInput();
     
     // Signal back to the Strategy an outcome of
     // a fuzz run using this strategy
-    void recordOutcome(Outcome outcome);
+    void recordOutcome(Outcome<Tinput> outcome);
     
 }

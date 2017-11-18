@@ -9,21 +9,20 @@ import java.util.List;
 import fayeth.engine.Outcome;
 import fayeth.engine.Strategy;
 import fayeth.engine.Task;
-import fayeth.engine.TestableInput;
 import fayeth.program.state.Args;
 import fayeth.subprocess.Subprocess;
 import fayeth.util.FileUtil;
 
-public class FuncTask implements Task {
+public class FuncTask implements Task<FuncTestableInput> {
 
 private static final int SAT_TIMEOUT = 10; // seconds
     
-    private final TestableInput testableInput;
+    private final FuncTestableInput testableInput;
     private final Args arguments;
-    private final Strategy strategy;
-    private Outcome outcome = new Outcome();
+    private final Strategy<FuncTestableInput> strategy;
+    private Outcome<FuncTestableInput> outcome = new Outcome<>();
     
-    public FuncTask(TestableInput testableInput, Args arguments, Strategy strategy) {
+    public FuncTask(FuncTestableInput testableInput, Args arguments, Strategy<FuncTestableInput> strategy) {
         super();
         this.testableInput = testableInput;
         this.arguments = arguments;
@@ -39,7 +38,7 @@ private static final int SAT_TIMEOUT = 10; // seconds
     }
 
     @Override
-    public Outcome run() throws IOException, InterruptedException {
+    public Outcome<FuncTestableInput> run() throws IOException, InterruptedException {
         outcome.setInput(testableInput);
         outcome.setStrategy(strategy);
         

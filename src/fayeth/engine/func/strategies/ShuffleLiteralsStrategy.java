@@ -1,14 +1,14 @@
 package fayeth.engine.func.strategies;
 
-import fayeth.cnf.CNF;
-import fayeth.engine.Outcome;
-import fayeth.engine.Strategy;
-import fayeth.engine.TestableInput;
-
 import java.util.List;
 import java.util.Random;
 
-public class ShuffleLiteralsStrategy implements Strategy{
+import fayeth.cnf.CNF;
+import fayeth.engine.Outcome;
+import fayeth.engine.Strategy;
+import fayeth.engine.func.FuncTestableInput;
+
+public class ShuffleLiteralsStrategy implements Strategy<FuncTestableInput> {
 
     private final List<CNF> formula;
     private Random random;
@@ -20,7 +20,7 @@ public class ShuffleLiteralsStrategy implements Strategy{
     }
 
     @Override
-    public TestableInput generateNextInput() {
+    public FuncTestableInput generateNextInput() {
         int randInt = random.nextInt(formula.size());
         while (randInt == seenBefore) {
             randInt = random.nextInt(formula.size());
@@ -29,7 +29,7 @@ public class ShuffleLiteralsStrategy implements Strategy{
     }
 
     @Override
-    public void recordOutcome(Outcome outcome) {
+    public void recordOutcome(Outcome<FuncTestableInput> outcome) {
         // Do nothing
     }
 

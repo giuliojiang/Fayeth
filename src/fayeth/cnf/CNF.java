@@ -17,11 +17,17 @@ import fayeth.engine.TestableInput;
 public class CNF implements TestableInput {
     private final List<List<Integer>> clauses;
     private final Set<Integer> variables;
+    private File sourceFile;
     private static final Pattern CNF_PATTERN = Pattern.compile("p cnf (\\d+) (\\d+)");
 
-    public CNF(List<List<Integer>> clauses, Set<Integer> variables) {
+    public CNF(List<List<Integer>> clauses, Set<Integer> variables, File sourceFile) {
         this.clauses = clauses;
         this.variables = variables;
+        this.sourceFile = sourceFile;
+    }
+    
+    public CNF(List<List<Integer>> clauses, Set<Integer> variables) {
+        this(clauses, variables, null);
     }
 
     public Set<Integer> getVariables() {
@@ -84,7 +90,7 @@ public class CNF implements TestableInput {
                 clauses.add(clause);
             }
             bi.close();
-            return new CNF(clauses, variables);
+            return new CNF(clauses, variables, f);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -115,5 +121,13 @@ public class CNF implements TestableInput {
             sb.append("0\n");
         }
         return sb.toString();
+    }
+    
+    /**
+     * Returns the name of the source file (no full path).
+     * Includes the extension
+     */
+    public String getSourceFileName() {
+        return sourceFile.getName();
     }
 }
