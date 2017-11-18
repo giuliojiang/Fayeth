@@ -11,16 +11,10 @@ import fayeth.engine.func.FuncTestableInput;
 
 public class ShuffleLiteralsInput implements FuncTestableInput {
 
-    private final Random random;
     private final CNF formula;
+    private final CNF genesisFormula;
 
     public ShuffleLiteralsInput(CNF formula, Random random) {
-        this.formula = formula;
-        this.random = random;
-    }
-
-    @Override
-    public String asString() {
         List<List<Integer>> clauses = formula.getClauses();
         List<List<Integer>> shuffledLiteralClauses = new ArrayList<>();
         for (List<Integer> clause : clauses) {
@@ -29,7 +23,13 @@ public class ShuffleLiteralsInput implements FuncTestableInput {
             shuffledLiteralClauses.add(shuffledClause);
         }
 
-        return new CNF(shuffledLiteralClauses, formula.getVariables()).asString();
+        this.formula = new CNF(shuffledLiteralClauses, formula.getVariables());
+        this.genesisFormula = formula;
+    }
+
+    @Override
+    public String asString() {
+        return formula.asString();
     }
 
     @Override
@@ -39,6 +39,6 @@ public class ShuffleLiteralsInput implements FuncTestableInput {
 
     @Override
     public String getGenesisFileName() {
-        return formula.getSourceFileName();
+        return genesisFormula.getSourceFileName();
     }
 }
