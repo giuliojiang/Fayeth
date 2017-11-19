@@ -3,21 +3,21 @@ package fayeth.engine;
 import java.util.LinkedList;
 import java.util.List;
 
-public class Outcome {
+public class Outcome<TInput> {
 
-    private TestableInput input;
-    private Strategy strategy;
-    private List<String> bugDescriptions;
+    protected TInput input;
+    protected Strategy<TInput> strategy;
+    protected List<String> bugDescriptions;
 
     public Outcome() {
         this.bugDescriptions = new LinkedList<>();
     }
 
-    public TestableInput getInput() {
+    public TInput getInput() {
         return input;
     }
 
-    public Strategy getStrategy() {
+    public Strategy<TInput> getStrategy() {
         return strategy;
     }
 
@@ -29,11 +29,11 @@ public class Outcome {
         return String.join(", ", bugDescriptions);
     }
 
-    public void setInput(TestableInput input) {
+    public void setInput(TInput input) {
         this.input = input;
     }
 
-    public void setStrategy(Strategy strategy) {
+    public void setStrategy(Strategy<TInput> strategy) {
         this.strategy = strategy;
     }
 

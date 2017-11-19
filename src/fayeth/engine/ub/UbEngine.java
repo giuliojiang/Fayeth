@@ -4,9 +4,14 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import fayeth.engine.*;
-import fayeth.engine.ub.strategies.random.RandomCorrectCNFStrategy;
+import fayeth.engine.Engine;
+import fayeth.engine.Outcome;
+import fayeth.engine.OutputCollector;
+import fayeth.engine.RandomFactory;
+import fayeth.engine.Strategy;
+import fayeth.engine.TestableInput;
 import fayeth.engine.ub.strategies.random.RandomBrokenCNFStrategy;
+import fayeth.engine.ub.strategies.random.RandomCorrectCNFStrategy;
 import fayeth.engine.ub.strategies.random.RandomSemiCNFStringStrategy;
 import fayeth.engine.ub.strategies.random.RandomStringStrategy;
 import fayeth.program.state.Args;
@@ -16,7 +21,7 @@ public class UbEngine implements Engine {
 
     private OutputCollector outputCollector;
     private Args arguments;
-    private List<Strategy> strategies = new ArrayList<>();
+    private List<Strategy<TestableInput>> strategies = new ArrayList<>();
 
     @Override
     public void setConfiguration(Args arguments) {
@@ -29,7 +34,7 @@ public class UbEngine implements Engine {
         strategies.add(new RandomBrokenCNFStrategy(randomFactory.newRandom()));
         strategies.add(new RandomCorrectCNFStrategy(randomFactory.newRandom()));
         Log.info("Using the following strategies:");
-        for (Strategy s : strategies) {
+        for (Strategy<TestableInput> s : strategies) {
             Log.info("\t" + s.getClass().getSimpleName());
         }
 
@@ -55,13 +60,13 @@ public class UbEngine implements Engine {
             int limit = arguments.getLimit();
             long i = 0;
             while (true) {
-                for(Strategy strategy : strategies) {
+                for(Strategy<TestableInput> strategy : strategies) {
                     if (limit != 0 && i >= limit) {
                         return;
                     }
                     TestableInput input = strategy.generateNextInput();
                     UbTask task = new UbTask(input, arguments, strategy);
-                    Outcome outcome = task.run();
+                    Outcome<TestableInput> outcome = task.run();
                     outputCollector.collect(outcome);
                     Log.info("A task is complete. Outcome is " + outcome);
                     i++;

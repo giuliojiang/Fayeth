@@ -1,15 +1,14 @@
 package fayeth.engine.ub.strategies.random;
 
-import fayeth.cnf.CNF;
-import fayeth.engine.TestableInput;
-
 import java.util.ArrayList;
-import java.util.Random;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
-import java.util.HashSet;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import fayeth.cnf.CNF;
+import fayeth.engine.TestableInput;
 
 public class RandomBrokenCNFInput implements TestableInput {
     final private Random random;

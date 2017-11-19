@@ -1,34 +1,39 @@
 package fayeth.engine.func.strategies;
 
-import fayeth.cnf.CNF;
-import fayeth.engine.Expectation;
-import fayeth.engine.Satisfiability;
-import fayeth.engine.TestableInput;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class ShuffleClausesInput implements TestableInput {
+import fayeth.cnf.CNF;
+import fayeth.engine.Expectation;
+import fayeth.engine.Satisfiability;
+import fayeth.engine.func.FuncTestableInput;
 
-    private final Random random;
+public class ShuffleClausesInput implements FuncTestableInput {
+
     private final CNF cnf;
+    private final CNF genesisFormula;
 
     public ShuffleClausesInput(CNF cnf, Random random) {
-        this.cnf = cnf;
-        this.random = random;
+        List<List<Integer>> shuffledClauses = new ArrayList<>(cnf.getClauses());
+        shuffledClauses.sort(((o1, o2) -> random.nextBoolean() ? -1 : 1));
+
+        this.cnf = new CNF(shuffledClauses, cnf.getVariables());
+        this.genesisFormula = cnf;
     }
 
     @Override
     public String asString() {
-        List<List<Integer>> shuffledClauses = new ArrayList<>(cnf.getClauses());
-        shuffledClauses.sort(((o1, o2) -> random.nextBoolean() ? -1 : 1));
-
-        return new CNF(shuffledClauses, cnf.getVariables()).asString();
+        return cnf.asString();
     }
 
     @Override
     public Expectation getExpectation() {
         return new Expectation(Satisfiability.SAT, Satisfiability.UNSAT);
+    }
+
+    @Override
+    public String getGenesisFileName() {
+        return genesisFormula.getSourceFileName();
     }
 }

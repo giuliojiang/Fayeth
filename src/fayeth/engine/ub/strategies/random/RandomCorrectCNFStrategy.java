@@ -1,12 +1,12 @@
 package fayeth.engine.ub.strategies.random;
 
+import java.util.Random;
+
 import fayeth.engine.Outcome;
 import fayeth.engine.Strategy;
 import fayeth.engine.TestableInput;
 
-import java.util.Random;
-
-public class RandomCorrectCNFStrategy implements Strategy {
+public class RandomCorrectCNFStrategy implements Strategy<TestableInput> {
     private final Random random;
 
     public RandomCorrectCNFStrategy(Random random) {
@@ -19,7 +19,7 @@ public class RandomCorrectCNFStrategy implements Strategy {
     }
 
     @Override
-    public void recordOutcome(Outcome outcome) {
+    public void recordOutcome(Outcome<TestableInput> outcome) {
 
     }
 }

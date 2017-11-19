@@ -4,8 +4,4 @@ public interface TestableInput {
 
     String asString();
     
-    default Expectation getExpectation() {
-        return null;
-    }
-    
 }

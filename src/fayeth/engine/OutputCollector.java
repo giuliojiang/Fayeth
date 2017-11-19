@@ -90,7 +90,7 @@ public class OutputCollector {
     
     // Public methods ---------------------------------------------------------
     
-    public void collect(Outcome outcome) throws IOException {
+    public void collect(Outcome<TestableInput> outcome) throws IOException {
         // Add
         String bugDescription = outcome.getBugDescriptionsAsString();
         if (bugDescription == null) {

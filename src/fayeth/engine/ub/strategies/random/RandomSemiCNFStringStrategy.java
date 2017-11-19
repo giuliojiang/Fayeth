@@ -1,12 +1,12 @@
 package fayeth.engine.ub.strategies.random;
 
+import java.util.Random;
+
 import fayeth.engine.Outcome;
 import fayeth.engine.Strategy;
 import fayeth.engine.TestableInput;
 
-import java.util.Random;
-
-public class RandomSemiCNFStringStrategy implements Strategy {
+public class RandomSemiCNFStringStrategy implements Strategy<TestableInput> {
 
     private final Random random;
 
@@ -20,7 +20,7 @@ public class RandomSemiCNFStringStrategy implements Strategy {
     }
 
     @Override
-    public void recordOutcome(Outcome outcome) {
+    public void recordOutcome(Outcome<TestableInput> outcome) {
         // Does nothing
     }
 

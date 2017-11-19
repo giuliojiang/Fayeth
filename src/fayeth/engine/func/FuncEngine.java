@@ -5,17 +5,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 import fayeth.cnf.CNF;
 import fayeth.engine.Engine;
 import fayeth.engine.Outcome;
-import fayeth.engine.OutputCollector;
 import fayeth.engine.RandomFactory;
 import fayeth.engine.Strategy;
-import fayeth.engine.TestableInput;
-import fayeth.engine.func.strategies.NullStrategy;
 import fayeth.engine.func.strategies.ShuffleClausesStrategy;
 import fayeth.engine.func.strategies.ShuffleLiteralsStrategy;
 import fayeth.program.state.Args;
@@ -23,9 +19,9 @@ import fayeth.util.Log;
 
 public class FuncEngine implements Engine {
 
-    private OutputCollector outputCollector;
+    private FuncOutputCollector outputCollector;
     private Args arguments;
-    private List<Strategy> strategies = new ArrayList<>();
+    private List<Strategy<FuncTestableInput>> strategies = new ArrayList<>();
     private List<CNF> initialFormulae;
     
     @Override
@@ -45,11 +41,11 @@ public class FuncEngine implements Engine {
         strategies.add(new ShuffleClausesStrategy(randomFactory.newRandom(), initialFormulae));
 
         Log.info("Using the following strategies:");
-        for (Strategy s : strategies) {
+        for (Strategy<FuncTestableInput> s : strategies) {
             Log.info("\t" + s.getClass().getSimpleName());
         }
 
-        this.outputCollector = new OutputCollector(arguments);
+        this.outputCollector = new FuncOutputCollector(arguments);
 
     }
 
@@ -72,13 +68,13 @@ public class FuncEngine implements Engine {
             int limit = arguments.getLimit();
             long i = 0;
             while (true) {
-                for(Strategy strategy : strategies) {
+                for(Strategy<FuncTestableInput> strategy : strategies) {
                     if (limit != 0 && i >= limit) {
                         return;
                     }
-                    TestableInput input = strategy.generateNextInput();
+                    FuncTestableInput input = strategy.generateNextInput();
                     FuncTask task = new FuncTask(input, arguments, strategy);
-                    Outcome outcome = task.run();
+                    Outcome<FuncTestableInput> outcome = task.run();
                     outputCollector.collect(outcome);
                     Log.info("A task is complete. Outcome is " + outcome);
                     i++;

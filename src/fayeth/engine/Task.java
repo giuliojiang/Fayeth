@@ -1,7 +1,7 @@
 package fayeth.engine;
 
-public interface Task {
+public interface Task<Tinput> {
 
-    Outcome run() throws Exception;
+    Outcome<Tinput> run() throws Exception;
     
 }
