@@ -22,8 +22,8 @@ public class FuncEngine implements Engine {
     private FuncOutputCollector outputCollector;
     private Args arguments;
     private List<Strategy<FuncTestableInput>> strategies = new ArrayList<>();
-    private List<CNF> initialFormulae;
-    
+    private FuncCNFCollection funcCNFCollection;
+
     @Override
     public void setConfiguration(Args arguments) {
         Log.info("Setting up FuncEngine with configuration " + arguments);
@@ -33,12 +33,12 @@ public class FuncEngine implements Engine {
 
         // Parse existing CNFs from input directory
         File inputDirectory = new File(arguments.getInputPath());
-        this.initialFormulae = Arrays.stream(inputDirectory.listFiles())
+        List<CNF> initialFormulae = Arrays.stream(inputDirectory.listFiles())
                 .filter(f -> f.getName().endsWith(".cnf"))
                 .map(CNF::fromFile).collect(Collectors.toList());
-
-        strategies.add(new ShuffleLiteralsStrategy(randomFactory.newRandom(), initialFormulae));
-        strategies.add(new ShuffleClausesStrategy(randomFactory.newRandom(), initialFormulae));
+        funcCNFCollection = new FuncCNFCollection(initialFormulae);
+        strategies.add(new ShuffleLiteralsStrategy(randomFactory.newRandom(), funcCNFCollection));
+        strategies.add(new ShuffleClausesStrategy(randomFactory.newRandom(), funcCNFCollection));
 
         Log.info("Using the following strategies:");
         for (Strategy<FuncTestableInput> s : strategies) {
@@ -54,7 +54,7 @@ public class FuncEngine implements Engine {
         if (arguments == null) {
             throw new RuntimeException("No configuration for FuncEngine. Please call setConfiguration first");
         }
-        
+
         if (arguments.isThreadingEnabled()) {
             // TODO add multithreaded supportc
             throw new RuntimeException("Multithreading is not supported yet. Please provide a fixed seed for reproducibility");
@@ -62,13 +62,13 @@ public class FuncEngine implements Engine {
             runSequential();
         }
     }
-    
+
     private void runSequential() {
         try {
             int limit = arguments.getLimit();
             long i = 0;
             while (true) {
-                for(Strategy<FuncTestableInput> strategy : strategies) {
+                for (Strategy<FuncTestableInput> strategy : strategies) {
                     if (limit != 0 && i >= limit) {
                         return;
                     }

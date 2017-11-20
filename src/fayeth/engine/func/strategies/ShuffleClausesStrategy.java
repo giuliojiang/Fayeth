@@ -6,15 +6,16 @@ import java.util.Random;
 import fayeth.cnf.CNF;
 import fayeth.engine.Outcome;
 import fayeth.engine.Strategy;
+import fayeth.engine.func.FuncCNFCollection;
 import fayeth.engine.func.FuncTestableInput;
 
 public class ShuffleClausesStrategy implements Strategy<FuncTestableInput> {
 
     private final Random random;
-    private final List<CNF> formulae;
+    private final FuncCNFCollection formulae;
     private int seenBefore = -1;
 
-    public ShuffleClausesStrategy(Random random, List<CNF> initialFormulae) {
+    public ShuffleClausesStrategy(Random random, FuncCNFCollection initialFormulae) {
         this.random = random;
         this.formulae = initialFormulae;
     }

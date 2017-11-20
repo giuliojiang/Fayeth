@@ -1,12 +1,14 @@
 package fayeth.engine.func.strategies;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 import fayeth.cnf.CNF;
 import fayeth.engine.Expectation;
 import fayeth.engine.Satisfiability;
+import fayeth.engine.func.CNFChain;
 import fayeth.engine.func.FuncTestableInput;
 
 public class ShuffleClausesInput implements FuncTestableInput {
@@ -14,12 +16,14 @@ public class ShuffleClausesInput implements FuncTestableInput {
     private final CNF cnf;
     private final CNF genesisFormula;
 
-    public ShuffleClausesInput(CNF cnf, Random random) {
-        List<List<Integer>> shuffledClauses = new ArrayList<>(cnf.getClauses());
-        shuffledClauses.sort(((o1, o2) -> random.nextBoolean() ? -1 : 1));
+    public ShuffleClausesInput(CNFChain cnf, Random random) {
+        CNF lastCNF = cnf.getLast();
+        List<List<Integer>> shuffledClauses = new ArrayList<>(lastCNF.getClauses());
+        Collections.shuffle(shuffledClauses, random);
 
-        this.cnf = new CNF(shuffledClauses, cnf.getVariables());
-        this.genesisFormula = cnf;
+        this.cnf = new CNF(shuffledClauses, lastCNF.getVariables());
+        this.genesisFormula = cnf.getBase();
+        cnf.addGeneratedCNF(this.cnf);
     }
 
     @Override
