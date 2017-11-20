@@ -18,6 +18,7 @@ public class CNF implements TestableInput {
     private final List<List<Integer>> clauses;
     private final Set<Integer> variables;
     private File sourceFile;
+    private double coverage;
     private static final Pattern CNF_PATTERN = Pattern.compile("p cnf (\\d+) (\\d+)");
 
     public CNF(List<List<Integer>> clauses, Set<Integer> variables, File sourceFile) {
@@ -129,5 +130,13 @@ public class CNF implements TestableInput {
      */
     public String getSourceFileName() {
         return sourceFile.getName();
+    }
+
+    public void recordCoverage(double coverage) {
+        this.coverage = coverage;
+    }
+
+    public double getCoverage() {
+        return coverage;
     }
 }

@@ -56,11 +56,11 @@ public class FuncEngine implements Engine {
         }
 
         if (arguments.isThreadingEnabled()) {
-            // TODO add multithreaded supportc
-            throw new RuntimeException("Multithreading is not supported yet. Please provide a fixed seed for reproducibility");
-        } else {
-            runSequential();
+            Log.info("Functional mode does not support multithreading");
+            // This is due to the fact that gcov records report files in the same directory,
+            // so running multiple copies of SAT will definitely cause issues.
         }
+        runSequential();
     }
 
     private void runSequential() {
