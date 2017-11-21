@@ -24,6 +24,7 @@ public class ShuffleClausesStrategy implements Strategy<FuncTestableInput> {
         while (randInt == seenBefore) {
             randInt = random.nextInt(formulae.size());
         }
+        seenBefore = randInt;
         return new ShuffleClausesInput(formulae.get(randInt), random);
     }
 
