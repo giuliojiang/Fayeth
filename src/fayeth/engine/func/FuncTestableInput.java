@@ -8,5 +8,7 @@ public interface FuncTestableInput extends TestableInput {
     Expectation getExpectation();
     
     String getGenesisFileName();
+
+    void recordCoverage(double d);
     
 }

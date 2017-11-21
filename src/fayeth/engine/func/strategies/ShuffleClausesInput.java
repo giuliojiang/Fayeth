@@ -40,4 +40,9 @@ public class ShuffleClausesInput implements FuncTestableInput {
     public String getGenesisFileName() {
         return genesisFormula.getSourceFileName();
     }
+
+    @Override
+    public void recordCoverage(double d) {
+        cnf.recordCoverage(d);
+    }
 }

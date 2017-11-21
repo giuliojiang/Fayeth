@@ -45,4 +45,9 @@ public class ShuffleLiteralsInput implements FuncTestableInput {
     public String getGenesisFileName() {
         return genesisFormula.getSourceFileName();
     }
+
+    @Override
+    public void recordCoverage(double coverage) {
+        formula.recordCoverage(coverage);
+    }
 }
