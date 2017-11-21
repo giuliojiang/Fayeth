@@ -27,6 +27,14 @@
 \usepackage{natbib} % Required to change bibliography style to APA
 \usepackage{amsmath} % Required for some math elements 
 
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={170mm,257mm},
+ left=20mm,
+ top=20mm,
+ }
+
 \setlength\parindent{0pt} % Removes all indentation from paragraphs
 
 \renewcommand{\labelenumi}{\alph{enumi}.} % Make numbering in the enumerate environment by letter rather than number (e.g. section 6)
@@ -63,10 +71,57 @@ Department of Computing \\
 
 
 
-\section{Introduction} % ----------------------------------------------------------------
+\section{Introduction}
+
+Fayeth is a fuzzer targeted to boolean satisfiability solvers. It can generate and mutate 
+random inputs and attempt to trigger bugs in the System Under Test (SUT), or create CNF files 
+that maximize the total code coverage of the software.
+
+\section{Overview}
+
+Fayeth is implemented in Java, and it can be executed in two different modes: 
+Undefined Behaviour Mode and Functional Error Mode. The model of operation is simple: 
+once started, Fayeth will automatically generate test cases and evaluate their 
+effectiveness on the target SAT solver. The fuzzer can be stopped at any time, 
+and the output directories will contain the generated inputs that Fayeth considers 
+the most interesting.
+
+\section{Undefined Behaviour Mode}
+
+The Undefined Behaviour Mode is aimed at finding undefined behaviour bugs, crashes and timeouts in the
+SAT Solver being targeted. It generates automatically random inputs of different kinds,
+and observes the behaviour of the SUT to try to detect whether some bug has manifested itself.
+The Undefined Behaviour Mode's detection power is amplified by the use of the Address
+Sanitizer to compile the SAT Solver, giving Fayeth the ability to detect a wider range of
+potentially silent bugs.\\
+
+Fayeth can generate a range of inputs, which we can categorize as follows:
+
+\begin{itemize}
+
+\item \verb|Random Strings| - A completely random sequence of characters, which an extremely low probability of representing a valid CNF formula. Random Strings will target early phases of CNF parsing.
+
+\item \verb|Random Clauses| - TODO
+
+\item \verb|Random Valid CNF| - TODO
+
+\end{itemize}
+
+\subsection{Strategies}
+
+\subsection{}
+
+\section{Functional Error Mode}
+
+\subsection{Strategies}
+
+\section{Software Architecture}
+
+\section{Optimizations}
+
+\section{Evaluation}
 
 
-%----------------------------------------------------------------------------------------
 
 
 \end{document}
