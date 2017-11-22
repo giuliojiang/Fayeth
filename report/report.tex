@@ -21,8 +21,6 @@
 
 \documentclass{article}
 
-%\usepackage[version=3]{mhchem} % Package for chemical equation typesetting
-%\usepackage{siunitx} % Provides the \SI{}{} and \si{} command for typesetting SI units
 \usepackage{graphicx} % Required for the inclusion of images
 \usepackage{natbib} % Required to change bibliography style to APA
 \usepackage{amsmath} % Required for some math elements 
@@ -171,6 +169,12 @@ previous strategies, allowing us to effectively combine multiple transformations
 
 \begin{itemize}
 
+\item \verb|Randomize variables| - TODO
+
+\item \verb|Randomize clauses| - TODO
+
+\item \verb|Insert Pure Literals| - TODO
+
 \item \verb|Additional unsatisfiable clauses| - The strategy has a database of small unsatisfiable formulas.
 Given the formula to be transformed, the strategy will choose a set of unused variables, pick a random
 unsatisfiable formula from the database, and rename each of the variables to unused variables. The resulting
@@ -190,7 +194,24 @@ the three other solvers that were provided. After running some tests on each of 
 
 \subsection{Banosat}
 
+As we are the authors of Banosat, we had an overall idea of where the bugs could be found, 
+including the voluntarily added undefined behaviour and functional bugs that were part of the first submission.\\
 
+We were reasonably confident that we had a robust parser. However, running Fayeth in UB mode on
+Banosat resulted immediately in a number of program crashes, illegal memory accesses and buffer overflows
+that we did not know about. Many of the mistakes were avoidable although hard to see without having
+a testable input, and the fact that Fayeth allowed us to discover bugs that we were not aware of is
+a good indication that the fuzzer, despite its simplicity, can be effective. \\
+
+For example, Banosat was not able to recognize the case where the header of a CNF file was malformed or missing,
+as it was actually not checking that the header appeared at the beginning of the file. While this bug
+does not cause any issue when parsing well-formed formulas, it does cause segmentation faults when parsing
+a random string. A graceful exit with an error message would have been a better behaviour.
+Additionally, the integer parser was not able to detect parse errors in literals. Inputs generated
+by \verb|Random Broken DIMACS Strategy| were therefore very likely to trigger bugs in our software. \\
+
+We have also checked that the undefined behaviour bug we have introduced (a use-after-free that occurred with certain
+inputs) was being correctly triggered and identified by the Undefined Behaviour Mode. \\
 
 \subsection{Sample solver 1}
 
