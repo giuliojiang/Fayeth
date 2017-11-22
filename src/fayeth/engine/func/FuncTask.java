@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import fayeth.engine.Outcome;
@@ -51,6 +50,16 @@ private static final int SAT_TIMEOUT = 5; // seconds
         // Write a temporary input file
         File tempFile = FileUtil.writeTemporaryFile(testableInput);
         
+        // Clean the GCOV generated reports
+        File cwd = new File(".");
+        File[] cwdFiles = cwd.listFiles();
+        for (File f : cwdFiles) {
+            String fname = f.getName();
+            if (fname.endsWith(".gcda") || fname.endsWith(".gcov")) {
+                f.delete();
+            }
+        }
+        
         // Run the SAT solver
         List<String> cmd = new ArrayList<>();
         cmd.add(Paths.get(arguments.getSutDir(), "runsat.sh").toAbsolutePath().toString());
@@ -65,8 +74,8 @@ private static final int SAT_TIMEOUT = 5; // seconds
         List<String> gcovCmd = new ArrayList<>();
         gcovCmd.add("gcov");
         gcovCmd.add("--no-output");
-        File cwd = new File(".");
-        File[] cwdFiles = cwd.listFiles();
+        
+        cwdFiles = cwd.listFiles();
         for (File f : cwdFiles) {
             if (f.getName().endsWith(".c")) {
                 gcovCmd.add(f.getAbsolutePath());
@@ -76,10 +85,7 @@ private static final int SAT_TIMEOUT = 5; // seconds
         gcovSp.waitFor();
         Log.info("Final coverage value is: " + gcovValue[0]);
         testableInput.recordCoverage(gcovValue[0]);
-        
-        // Clean the GCOV generated reports
-        new Subprocess(Arrays.asList("rm", "-rf", "*.gcno", "*.gcda"), 0, new NullProcessListener()).waitFor();
-        
+
         // Cleanup
         if (!arguments.isGcDisabled()) {
             tempFile.delete();
@@ -132,31 +138,6 @@ private static final int SAT_TIMEOUT = 5; // seconds
         public void onTimeout() {
             
         }
-        
-    }
-    
-    private static class NullProcessListener implements SubprocessListener {
-
-        @Override
-        public void onStdoutLine(String line) {
-
-        }
-
-        @Override
-        public void onStderrLine(String line) {
-            
-        }
-
-        @Override
-        public void onExit(int code) {
-            
-        }
-
-        @Override
-        public void onTimeout() {
-            
-        }
-        
         
     }
 

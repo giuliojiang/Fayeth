@@ -27,7 +27,7 @@ class AddPureLiteralInput implements FuncTestableInput {
         System.out.println("Added literal "+newLit);
         Set<Integer> newVars = new HashSet<>(lastCNF.getVariables());
         newVars.add(newLit);
-        this.cnf = new CNF(newClauses, newVars);
+        this.cnf = new CNF(newClauses, newVars, lastCNF.getSourceFile());
         this.genesisFormula = cnfChain.getBase();
         cnfChain.addGeneratedCNF(this.cnf);
     }

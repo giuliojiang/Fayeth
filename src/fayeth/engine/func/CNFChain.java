@@ -4,6 +4,7 @@ import fayeth.cnf.CNF;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class CNFChain {
 
@@ -53,5 +54,18 @@ public class CNFChain {
             }
         }
         return candidate;
+    }
+
+    public int getNumberGenerated() {
+        return generated.size();
+    }
+
+    public CNF getRandom(Random random) {
+        int idx = random.nextInt(generated.size() + 1);
+        if (idx == generated.size()) {
+            return base;
+        } else {
+            return generated.get(idx);
+        }
     }
 }
