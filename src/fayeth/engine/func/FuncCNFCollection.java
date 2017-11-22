@@ -4,6 +4,7 @@ import fayeth.cnf.CNF;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class FuncCNFCollection {
 
@@ -34,5 +35,22 @@ public class FuncCNFCollection {
 
     public CNFChain get(int idx) {
         return collection.get(idx);
+    }
+
+    public CNFChain selectLeastUsed() {
+        int minUsages = Integer.MAX_VALUE;
+        CNFChain minChain = null;
+        for (CNFChain c : collection) {
+            int currUsages = c.getNumberGenerated();
+            if (currUsages < minUsages) {
+                minUsages = currUsages;
+                minChain = c;
+            }
+        }
+        return minChain;
+    }
+
+    public CNFChain selectRandom(Random random) {
+        return collection.get(random.nextInt(collection.size()));
     }
 }

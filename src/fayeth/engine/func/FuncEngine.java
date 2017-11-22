@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 import fayeth.cnf.CNF;
@@ -12,6 +13,7 @@ import fayeth.engine.Engine;
 import fayeth.engine.Outcome;
 import fayeth.engine.RandomFactory;
 import fayeth.engine.Strategy;
+import fayeth.engine.func.strategies.AddContradictingStrategy;
 import fayeth.engine.func.strategies.AddPureLiteralStrategy;
 import fayeth.engine.func.strategies.ShuffleClausesStrategy;
 import fayeth.engine.func.strategies.ShuffleLiteralsStrategy;
@@ -24,6 +26,7 @@ public class FuncEngine implements Engine {
     private Args arguments;
     private List<Strategy<FuncTestableInput>> strategies = new ArrayList<>();
     private FuncCNFCollection funcCNFCollection;
+    private Random random;
 
     @Override
     public void setConfiguration(Args arguments) {
@@ -41,13 +44,14 @@ public class FuncEngine implements Engine {
         strategies.add(new ShuffleLiteralsStrategy(randomFactory.newRandom(), funcCNFCollection));
         strategies.add(new ShuffleClausesStrategy(randomFactory.newRandom(), funcCNFCollection));
         strategies.add(new AddPureLiteralStrategy(randomFactory.newRandom(), funcCNFCollection));
+        strategies.add(new AddContradictingStrategy(funcCNFCollection, randomFactory.newRandom()));
         Log.info("Using the following strategies:");
         for (Strategy<FuncTestableInput> s : strategies) {
             Log.info("\t" + s.getClass().getSimpleName());
         }
 
         this.outputCollector = new FuncOutputCollector(arguments);
-
+        this.random = randomFactory.newRandom();
     }
 
     @Override
@@ -69,17 +73,16 @@ public class FuncEngine implements Engine {
             int limit = arguments.getLimit();
             long i = 0;
             while (true) {
-                for (Strategy<FuncTestableInput> strategy : strategies) {
-                    if (limit != 0 && i >= limit) {
-                        return;
-                    }
-                    FuncTestableInput input = strategy.generateNextInput();
-                    FuncTask task = new FuncTask(input, arguments, strategy);
-                    Outcome<FuncTestableInput> outcome = task.run();
-                    outputCollector.collect(outcome);
-                    Log.info("A task is complete. Outcome is " + outcome);
-                    i++;
+                if (limit != 0 && i >= limit) {
+                    return;
                 }
+                Strategy<FuncTestableInput> s = strategies.get(random.nextInt(strategies.size()));
+                FuncTestableInput input = s.generateNextInput();
+                FuncTask task = new FuncTask(input, arguments, s);
+                Outcome<FuncTestableInput> outcome = task.run();
+                outputCollector.collect(outcome);
+                Log.info("A task is complete. Outcome is " + outcome);
+                i++;
             }
         } catch (IOException | InterruptedException e) {
             throw new RuntimeException(e);

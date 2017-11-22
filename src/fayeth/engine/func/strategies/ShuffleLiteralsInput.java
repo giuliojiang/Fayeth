@@ -26,7 +26,7 @@ public class ShuffleLiteralsInput implements FuncTestableInput {
             shuffledLiteralClauses.add(shuffledClause);
         }
 
-        this.formula = new CNF(shuffledLiteralClauses, lastFormula.getVariables());
+        this.formula = new CNF(shuffledLiteralClauses, lastFormula.getVariables(), lastFormula.getSourceFile());
         cnfChain.addGeneratedCNF(this.formula);
         this.genesisFormula = cnfChain.getBase();
     }

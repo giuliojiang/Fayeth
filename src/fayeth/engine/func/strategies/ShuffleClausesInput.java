@@ -21,7 +21,7 @@ public class ShuffleClausesInput implements FuncTestableInput {
         List<List<Integer>> shuffledClauses = new ArrayList<>(lastCNF.getClauses());
         Collections.shuffle(shuffledClauses, random);
 
-        this.cnf = new CNF(shuffledClauses, lastCNF.getVariables());
+        this.cnf = new CNF(shuffledClauses, lastCNF.getVariables(), lastCNF.getSourceFile());
         this.genesisFormula = cnf.getBase();
         cnf.addGeneratedCNF(this.cnf);
     }

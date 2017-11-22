@@ -6,13 +6,16 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import fayeth.engine.TestableInput;
+import fayeth.util.Log;
 
 public class CNF implements TestableInput {
     private final List<List<Integer>> clauses;
@@ -107,6 +110,19 @@ public class CNF implements TestableInput {
     public static CNF fromFile(String path) {
         return fromFile(new File(path));
     }
+    
+    public static CNF copyFrom(CNF other) {
+        List<List<Integer>> newClauses = new ArrayList<>();
+        for (List<Integer> aClause : other.clauses) {
+            newClauses.add(new ArrayList<>(aClause));
+        }
+        
+        Set<Integer> newVariables = new HashSet<>(other.variables);
+        
+        File newSourceFile = other.sourceFile;
+        
+        return new CNF(newClauses, newVariables, newSourceFile);
+    }
 
     /**
      * Creates a file string representation from a CNF
@@ -138,5 +154,36 @@ public class CNF implements TestableInput {
 
     public double getCoverage() {
         return coverage;
+    }
+
+    public void addClause(List<Integer> aClause) {
+        this.clauses.add(aClause);
+        for (Integer lit : aClause) {
+            variables.add(Math.abs(lit));
+        }
+    }
+
+    public void shuffleClauses(Random random) {
+        Collections.shuffle(clauses, random);
+    }
+
+    public File getSourceFile() {
+        return sourceFile;
+    }
+    
+    /**
+     * @return An unused variable.
+     */
+    public int nextNewVariable() {
+        int newVar = variables.size() + 1;
+        if (variables.contains(newVar)) {
+            Log.error("Getting a new variable: this variable is contained in variables map. Did variables have skipped variables? It would not be valid CNF");
+            for (int i = newVar; ; i++) {
+                if (!variables.contains(i)) {
+                    return i;
+                }
+            }
+        }
+        return newVar;
     }
 }
