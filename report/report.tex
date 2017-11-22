@@ -99,11 +99,23 @@ Fayeth can generate a range of inputs, which we can categorize as follows:
 
 \begin{itemize}
 
-\item \verb|Random Strings| - A completely random sequence of characters, which an extremely low probability of representing a valid CNF formula. Random Strings will target early phases of CNF parsing.
-
-\item \verb|Random Clauses| - TODO
-
-\item \verb|Random Valid CNF| - TODO
+		\item \verb|Random string| - A completely random sequence of characters, with an extremely low probability of representing a valid \texttt{DIMACS} file. This strategy helps to catch undefined behaviour happening during parsing.
+		The length of the random string is not fixed and the strings generated contain any of the characters encoded in the first 8 bits of \texttt{UTF-8}, from \texttt{0} to \texttt{U+007F}. \\
+		This is a good example of dumb fuzzing.
+		
+		\item \verb|Random DIMACS-like string| - A partially random string, resembling the structure of \texttt{DIMACS}. all of the 
+		files generated start with \texttt{p cnf number1 number2}, where \texttt{number1} and \texttt{number2} are two random numbers
+		and the rest of the file is composed of random integers (separated by space like \texttt{DIMACS}) and each line ends with a \texttt{0}, again like \texttt{DIMACS}. \\
+		This strategy has the potential of causing overflows, as the \texttt{SUT} may allocate enough space for the data structure according to the \texttt{DIMACS} header, but the clauses and variables effectively created do not match the numbers specified in the header.\\
+		This is an example of smart fuzzing.
+		
+		\item \verb|Random Valid DIMACS| - A randomly generated \texttt{DIMACS} file, with reasonably large formulae, this strategy generates files that are perfectly valid \texttt{DIMACS}, but being relatively large aim at catching infinite loops or stack overflows. \\
+		This is an example of smart fuzzing.
+		
+		\item \verb|Random Broken DIMACS| - A mix of the \emph{Random strings} and the \emph{Random DIMACS-like string} strategies.
+		This strategy generates a file that contains a valid \texttt{DIMACS} header like \texttt{p cnf number1 number2}, where \texttt{number1} and \texttt{number2} are two random numbers, followed by random \texttt{UTF-8} characters.
+		This strategy aims to find bugs related to overflow and bad input sanitization.  \\
+		This is technically smart fuzzing, but is closer to a dumb one in practice.
 
 \end{itemize}
 
