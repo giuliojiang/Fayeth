@@ -14,9 +14,10 @@ class AddPureLiteralInput implements FuncTestableInput {
 
     AddPureLiteralInput(Random random, CNFChain cnfChain) {
 
-        final CNF lastCNF = cnfChain.getLast();
+        final CNF lastCNF = random.nextBoolean() ? cnfChain.getHighestCoverage() : cnfChain.getLast();
         final Integer newLit = cnfChain.getBase().getVariables().size() + 1;
-        final int randomNumClauses = random.nextInt(lastCNF.getClauses().size());
+        int randomNumClauses = random.nextInt(lastCNF.getClauses().size() + 1);
+
         final int sign = random.nextBoolean() ? 1 : -1;
         final List<List<Integer>> newClauses = new ArrayList<>(lastCNF.getClauses());
         for(int i = 0; i < randomNumClauses; i++) {
@@ -43,7 +44,7 @@ class AddPureLiteralInput implements FuncTestableInput {
 
     @Override
     public void recordCoverage(double d) {
-
+        this.cnf.recordCoverage(d);
     }
 
     @Override
