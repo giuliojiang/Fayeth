@@ -1,0 +1,139 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% University/School Laboratory Report
+% LaTeX Template
+% Version 3.1 (25/3/14)
+%
+% This template has been downloaded from:
+% http://www.LaTeXTemplates.com
+%
+% Original author:
+% Linux and Unix Users Group at Virginia Tech Wiki 
+% (https://vtluug.org/wiki/Example_LaTeX_chem_lab_report)
+%
+% License:
+% CC BY-NC-SA 3.0 (http://creativecommons.org/licenses/by-nc-sa/3.0/)
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{article}
+
+\usepackage[version=3]{mhchem} % Package for chemical equation typesetting
+\usepackage{siunitx} % Provides the \SI{}{} and \si{} command for typesetting SI units
+\usepackage{graphicx} % Required for the inclusion of images
+\usepackage{natbib} % Required to change bibliography style to APA
+\usepackage{amsmath} % Required for some math elements 
+
+\usepackage{geometry}
+ \geometry{
+ a4paper,
+ total={170mm,257mm},
+ left=20mm,
+ top=20mm,
+ }
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+\renewcommand{\labelenumi}{\alph{enumi}.} % Make numbering in the enumerate environment by letter rather than number (e.g. section 6)
+
+%\usepackage{times} % Uncomment to use the Times New Roman font
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT INFORMATION
+%----------------------------------------------------------------------------------------
+
+\title{Fayeth \\ DIMACS Fuzzer} % Title
+
+\author{Giulio Jiang \\ Abraao Mota \\ Domenico Marino} % Author name
+
+\date{\today} % Date for the report
+
+\begin{document}
+
+\maketitle % Insert the title, author and date
+
+\begin{center}
+\begin{tabular}{l r}
+Imperial College London \\
+Department of Computing \\
+\end{tabular}
+\end{center}
+
+% If you wish to include an abstract, uncomment the lines below
+% \begin{abstract}
+% Abstract text
+% \end{abstract}
+
+\newpage
+
+
+
+\section{Introduction}
+
+Fayeth is a fuzzer targeted to boolean satisfiability solvers. It can generate and mutate 
+random inputs and attempt to trigger bugs in the System Under Test (SUT), or create CNF files 
+that maximize the total code coverage of the software.
+
+\section{Overview}
+
+Fayeth is implemented in Java, and it can be executed in two different modes: 
+Undefined Behaviour Mode and Functional Error Mode. The model of operation is simple: 
+once started, Fayeth will automatically generate test cases and evaluate their 
+effectiveness on the target SAT solver. The fuzzer can be stopped at any time, 
+and the output directories will contain the generated inputs that Fayeth considers 
+the most interesting.
+
+\section{Undefined Behaviour Mode}
+
+The Undefined Behaviour Mode is aimed at finding undefined behaviour bugs, crashes and timeouts in the
+SAT Solver being targeted. It generates automatically random inputs of different kinds,
+and observes the behaviour of the SUT to try to detect whether some bug has manifested itself.
+The Undefined Behaviour Mode's detection power is amplified by the use of the Address
+Sanitizer to compile the SAT Solver, giving Fayeth the ability to detect a wider range of
+potentially silent bugs.\\
+
+Fayeth can generate a range of inputs, which we can categorize as follows:
+
+\begin{itemize}
+
+		\item \verb|Random string| - A completely random sequence of characters, with an extremely low probability of representing a valid \texttt{DIMACS} file. This strategy helps to catch undefined behaviour happening during parsing.
+		The length of the random string is not fixed and the strings generated contain any of the characters encoded in the first 8 bits of \texttt{UTF-8}, from \texttt{0} to \texttt{U+007F}. \\
+		This is a good example of dumb fuzzing.
+		
+		\item \verb|Random DIMACS-like string| - A partially random string, resembling the structure of \texttt{DIMACS}. all of the 
+		files generated start with \texttt{p cnf number1 number2}, where \texttt{number1} and \texttt{number2} are two random numbers
+		and the rest of the file is composed of random integers (separated by space like \texttt{DIMACS}) and each line ends with a \texttt{0}, again like \texttt{DIMACS}. \\
+		This strategy has the potential of causing overflows, as the \texttt{SUT} may allocate enough space for the data structure according to the \texttt{DIMACS} header, but the clauses and variables effectively created do not match the numbers specified in the header.\\
+		This is an example of smart fuzzing.
+		
+		\item \verb|Random Valid DIMACS| - A randomly generated \texttt{DIMACS} file, with reasonably large formulae, this strategy generates files that are perfectly valid \texttt{DIMACS}, but being relatively large aim at catching infinite loops or stack overflows. \\
+		This is an example of smart fuzzing.
+		
+		\item \verb|Random Broken DIMACS| - A mix of the \emph{Random strings} and the \emph{Random DIMACS-like string} strategies.
+		This strategy generates a file that contains a valid \texttt{DIMACS} header like \texttt{p cnf number1 number2}, where \texttt{number1} and \texttt{number2} are two random numbers, followed by random \texttt{UTF-8} characters.
+		This strategy aims to find bugs related to overflow and bad input sanitization.  \\
+		This is technically smart fuzzing, but is closer to a dumb one in practice.
+
+\end{itemize}
+
+\subsection{Strategies}
+
+\subsection{}
+
+\section{Functional Error Mode}
+
+\subsection{Strategies}
+
+\section{Software Architecture}
+
+\section{Optimizations}
+
+\section{Evaluation}
+
+
+
+
+\end{document}
