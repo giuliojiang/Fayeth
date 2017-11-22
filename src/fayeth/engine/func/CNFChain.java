@@ -37,4 +37,21 @@ public class CNFChain {
         }
         return generated.peekLast();
     }
+    
+    public CNF getHighestCoverage() {
+        if (generated.isEmpty()) {
+            return base;
+        }
+        
+        double maxCoverage = -1d;
+        CNF candidate = null;
+        for (CNF cnf : generated) {
+            double aCoverage = cnf.getCoverage();
+            if (aCoverage >= maxCoverage) {
+                maxCoverage = aCoverage;
+                candidate = cnf;
+            }
+        }
+        return candidate;
+    }
 }

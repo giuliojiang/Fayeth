@@ -1,9 +1,7 @@
 package fayeth.engine.func.strategies;
 
-import java.util.List;
 import java.util.Random;
 
-import fayeth.cnf.CNF;
 import fayeth.engine.Outcome;
 import fayeth.engine.Strategy;
 import fayeth.engine.func.FuncCNFCollection;
@@ -26,6 +24,7 @@ public class ShuffleClausesStrategy implements Strategy<FuncTestableInput> {
         while (randInt == seenBefore) {
             randInt = random.nextInt(formulae.size());
         }
+        seenBefore = randInt;
         return new ShuffleClausesInput(formulae.get(randInt), random);
     }
 

@@ -12,6 +12,7 @@ import fayeth.engine.Engine;
 import fayeth.engine.Outcome;
 import fayeth.engine.RandomFactory;
 import fayeth.engine.Strategy;
+import fayeth.engine.func.strategies.AddPureLiteralStrategy;
 import fayeth.engine.func.strategies.ShuffleClausesStrategy;
 import fayeth.engine.func.strategies.ShuffleLiteralsStrategy;
 import fayeth.program.state.Args;
@@ -39,7 +40,7 @@ public class FuncEngine implements Engine {
         funcCNFCollection = new FuncCNFCollection(initialFormulae);
         strategies.add(new ShuffleLiteralsStrategy(randomFactory.newRandom(), funcCNFCollection));
         strategies.add(new ShuffleClausesStrategy(randomFactory.newRandom(), funcCNFCollection));
-
+        strategies.add(new AddPureLiteralStrategy(randomFactory.newRandom(), funcCNFCollection));
         Log.info("Using the following strategies:");
         for (Strategy<FuncTestableInput> s : strategies) {
             Log.info("\t" + s.getClass().getSimpleName());
@@ -56,11 +57,11 @@ public class FuncEngine implements Engine {
         }
 
         if (arguments.isThreadingEnabled()) {
-            // TODO add multithreaded supportc
-            throw new RuntimeException("Multithreading is not supported yet. Please provide a fixed seed for reproducibility");
-        } else {
-            runSequential();
+            Log.info("Functional mode does not support multithreading");
+            // This is due to the fact that gcov records report files in the same directory,
+            // so running multiple copies of SAT will definitely cause issues.
         }
+        runSequential();
     }
 
     private void runSequential() {
