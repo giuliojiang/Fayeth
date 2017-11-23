@@ -22,12 +22,13 @@ public class UbEngine implements Engine {
     private OutputCollector outputCollector;
     private Args arguments;
     private List<Strategy<TestableInput>> strategies = new ArrayList<>();
+    private RandomFactory randomFactory;
 
     @Override
     public void setConfiguration(Args arguments) {
         Log.info("Setting up UbEngine with configuration " + arguments);
         this.arguments = arguments;
-        RandomFactory randomFactory = new RandomFactory(arguments.getSeed());
+        this.randomFactory = new RandomFactory(arguments.getSeed());
         Log.info("Seed used is: " + randomFactory.getSeed());
         strategies.add(new RandomStringStrategy(randomFactory.newRandom()));
         strategies.add(new RandomSemiCNFStringStrategy(randomFactory.newRandom()));
@@ -48,10 +49,33 @@ public class UbEngine implements Engine {
         }
         
         if (arguments.isThreadingEnabled()) {
-            // TODO add multithreaded supportc
-            throw new RuntimeException("Multithreading is not supported yet. Please provide a fixed seed for reproducibility");
+            runMultithreaded();
         } else {
             runSequential();
+        }
+    }
+
+    /**
+     * Runs tasks in parallel.
+     * When running in multithreaded mode, no reproducibility even with a fixed seed is guaranteed
+     */
+    private void runMultithreaded() {
+        int cores = Runtime.getRuntime().availableProcessors();
+        List<Thread> threads = new ArrayList<>();
+        UbConcurrentMonitor monitor = new UbConcurrentMonitor(
+                arguments.getLimit(), strategies, outputCollector, arguments, randomFactory.newRandom());
+        for (int i = 0; i < cores; i++) {
+            UbConcurrentRunner aRunner = new UbConcurrentRunner(monitor, i);
+            Thread aThread = new Thread(aRunner);
+            threads.add(aThread);
+            aThread.start();
+        }
+        try {
+            for (Thread aThread : threads) {
+                aThread.join();
+            }
+        } catch (InterruptedException e) {
+            Log.error("UbEngine:runMultithreaded: Exception when waiting for threads to join", e);
         }
     }
 
