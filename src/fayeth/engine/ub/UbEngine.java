@@ -3,6 +3,9 @@ package fayeth.engine.ub;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import fayeth.engine.Engine;
 import fayeth.engine.Outcome;
@@ -40,18 +43,55 @@ public class UbEngine implements Engine {
 
         this.outputCollector = new OutputCollector(arguments);
     }
-    
+
     @Override
     public void run() {
         if (arguments == null) {
             throw new RuntimeException("No configuration for UbEngine. Please call setConfiguration first");
         }
-        
+
         if (arguments.isThreadingEnabled()) {
-            // TODO add multithreaded supportc
-            throw new RuntimeException("Multithreading is not supported yet. Please provide a fixed seed for reproducibility");
+            runParallel();
         } else {
             runSequential();
+        }
+    }
+
+    private void runParallel() {
+        ExecutorService es = Executors.newCachedThreadPool();
+        int limit = arguments.getLimit() > 0 ? arguments.getLimit() : 1000;
+        long i = 0;
+        while (true) {
+            if (limit != 0 && i >= limit) {
+                    break;
+            }
+            for (Strategy<TestableInput> strategy : strategies) {
+
+                es.submit(() -> {
+                    TestableInput input = strategy.generateNextInput();
+                    UbTask task = new UbTask(input, arguments, strategy);
+                    Outcome<TestableInput> outcome = null;
+                    try {
+                        outcome = task.run();
+                    } catch (IOException | InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        outputCollector.collect(outcome);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Log.info("A task is complete. Outcome is " + outcome);
+                });
+                i++;
+            }
+        }
+        try {
+            es.awaitTermination(1, TimeUnit.MINUTES);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            es.shutdownNow();
         }
     }
 
@@ -60,7 +100,7 @@ public class UbEngine implements Engine {
             int limit = arguments.getLimit();
             long i = 0;
             while (true) {
-                for(Strategy<TestableInput> strategy : strategies) {
+                for (Strategy<TestableInput> strategy : strategies) {
                     if (limit != 0 && i >= limit) {
                         return;
                     }
