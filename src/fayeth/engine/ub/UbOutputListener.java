@@ -35,6 +35,9 @@ public class UbOutputListener implements SubprocessListener {
     @Override
     public void onExit(int code) {
         Log.info("EXIT:" + code);
+        if (code != 0) {
+            ubTask.onBugFound("Non-zero exit code: " + code);
+        }
         ubTask.onCompletion();
     }
 
