@@ -62,7 +62,7 @@ private static final int SAT_TIMEOUT = 5; // seconds
         
         // Run the SAT solver
         List<String> cmd = new ArrayList<>();
-        cmd.add(Paths.get(arguments.getSutDir(), "runsat.sh").toAbsolutePath().toString());
+        cmd.add(Paths.get(arguments.getSutDir(), "sat").toAbsolutePath().toString());
         cmd.add(tempFile.getAbsolutePath());
         Subprocess sp = new Subprocess(cmd, SAT_TIMEOUT, listener);
         sp.waitFor();

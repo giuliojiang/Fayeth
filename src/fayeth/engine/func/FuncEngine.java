@@ -13,7 +13,12 @@ import fayeth.engine.Engine;
 import fayeth.engine.Outcome;
 import fayeth.engine.RandomFactory;
 import fayeth.engine.Strategy;
-import fayeth.engine.func.strategies.*;
+import fayeth.engine.func.strategies.AddContradictingStrategy;
+import fayeth.engine.func.strategies.AddPureLiteralStrategy;
+import fayeth.engine.func.strategies.AddRandomClauseStrategy;
+import fayeth.engine.func.strategies.AddUnitClausesStrategy;
+import fayeth.engine.func.strategies.ShuffleClausesStrategy;
+import fayeth.engine.func.strategies.ShuffleLiteralsStrategy;
 import fayeth.program.state.Args;
 import fayeth.util.Log;
 
@@ -43,6 +48,7 @@ public class FuncEngine implements Engine {
         strategies.add(new AddPureLiteralStrategy(randomFactory.newRandom(), funcCNFCollection));
         strategies.add(new AddContradictingStrategy(funcCNFCollection, randomFactory.newRandom()));
         strategies.add(new AddRandomClauseStrategy(randomFactory.newRandom(), funcCNFCollection));
+        strategies.add(new AddUnitClausesStrategy(funcCNFCollection, randomFactory.newRandom()));
         Log.info("Using the following strategies:");
         for (Strategy<FuncTestableInput> s : strategies) {
             Log.info("\t" + s.getClass().getSimpleName());

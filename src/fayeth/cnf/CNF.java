@@ -186,4 +186,17 @@ public class CNF implements TestableInput {
         }
         return newVar;
     }
+    
+    public List<Integer> getRandomClause(Random random) {
+        return clauses.get(random.nextInt(clauses.size()));
+    }
+
+    public Integer getRandomVariable(Random random) {
+        if (variables.isEmpty()) {
+            return null;
+        }
+        
+        // Variables range from 1 to size of the set
+        return random.nextInt(variables.size()) + 1;
+    }
 }
