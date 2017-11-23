@@ -98,15 +98,17 @@ public class OutputCollector {
             return;
         }
         String newFilePath = nextFilePath();
-        if (!collectedOutputs.containsKey(bugDescription)) {
-            collectedOutputs.put(bugDescription, new LinkedList<>());
+        synchronized(collectedOutputs) {
+            if (!collectedOutputs.containsKey(bugDescription)) {
+                collectedOutputs.put(bugDescription, new LinkedList<>());
+            }
+            File writtenFile = FileUtil.writeToFile(outcome.getInput(), newFilePath);
+            collectedOutputs.get(bugDescription).add(writtenFile);
+            size++;
+
+            // Purge
+            purge();
         }
-        File writtenFile = FileUtil.writeToFile(outcome.getInput(), newFilePath);
-        collectedOutputs.get(bugDescription).add(writtenFile);
-        size++;
-        
-        // Purge
-        purge();
     }
     
 }
