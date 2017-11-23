@@ -182,10 +182,26 @@ clauses are injected in the input formula, which has then its clauses shuffled.
 This strategy will make any formula unsatisfiable as the conjunction of anything with a set of unsatisfiable
 clauses will always be false.
 
+\item \verb|Insert Unit Clauses| - In an attempt to trigger BCP algorithms in SAT solvers that rely on unit clauses,
+this strategy can randomly select an existing clause and add to it a new negated literal with a variable that did
+not appear in the formula, and a new clause containing only the new literal. This implies that the new
+literal has to be True for the formula to be satisfiable, which makes the literal injected in the existing
+clause false. Therefore the original clause has still the same logical meaning as before, and this transformation
+creates an equisatisfiable mutation.
+
 \end{itemize}
 
 
 \section{Optimizations}
+
+Fayeth is able to run in multithreaded mode in Undefined Behaviour mode. Each task is run independently
+and outputs are collected by a thread-safe collector service. On a multithreaded machine, this optimization
+yields a linear increase in fuzzing rate with the number of cores available.\\
+
+Unfortunately, due to the dependency on \verb|gcov| to obtain coverage data, the Functional Bug Mode cannot
+easily exploit multi-threading unless multiple copies of the SUT are made to ensure that coverage data does
+not get overwritten by concurrent copies of the solver. In our limited time available, we did not implement
+multithreading for the Functional mode.
 
 \section{Evaluation}
 
