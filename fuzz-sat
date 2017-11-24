@@ -81,7 +81,7 @@ seed = args.seed
 
 # Setup environment variables
 os.environ["LIBC_FATAL_STDERR_"] = "1"
-os.environ["FAYETH_NOTHREADING"] = "1" if args.nothreading else "0"
+os.environ["FAYETH_NOTHREADING"] = "1" if (args.nothreading or (seed is not None)) else "0"
 os.environ["FAYETH_NOGC"]        = "1" if args.nogc else "0"
 os.environ["FAYETH_LIMIT"]       = str(args.limit)
 
