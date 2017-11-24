@@ -10,6 +10,7 @@ import fayeth.engine.OutputCollector;
 import fayeth.engine.RandomFactory;
 import fayeth.engine.Strategy;
 import fayeth.engine.TestableInput;
+import fayeth.engine.ub.strategies.SquareCNFStrategy;
 import fayeth.engine.ub.strategies.random.RandomBrokenCNFStrategy;
 import fayeth.engine.ub.strategies.random.RandomCorrectCNFStrategy;
 import fayeth.engine.ub.strategies.random.RandomSemiCNFStringStrategy;
@@ -34,6 +35,7 @@ public class UbEngine implements Engine {
         strategies.add(new RandomSemiCNFStringStrategy(randomFactory.newRandom()));
         strategies.add(new RandomBrokenCNFStrategy(randomFactory.newRandom()));
         strategies.add(new RandomCorrectCNFStrategy(randomFactory.newRandom()));
+        strategies.add(new SquareCNFStrategy(randomFactory.newRandom()));
         Log.info("Using the following strategies:");
         for (Strategy<TestableInput> s : strategies) {
             Log.info("\t" + s.getClass().getSimpleName());
@@ -60,6 +62,8 @@ public class UbEngine implements Engine {
      * When running in multithreaded mode, no reproducibility even with a fixed seed is guaranteed
      */
     private void runMultithreaded() {
+        Log.info("Fayeth is starting with multithreading enabled. No reproducibility of results is guaranteed");
+        
         int cores = Runtime.getRuntime().availableProcessors();
         List<Thread> threads = new ArrayList<>();
         UbConcurrentMonitor monitor = new UbConcurrentMonitor(

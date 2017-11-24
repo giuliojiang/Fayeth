@@ -7,8 +7,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -18,8 +20,8 @@ import fayeth.engine.TestableInput;
 import fayeth.util.Log;
 
 public class CNF implements TestableInput {
-    private final List<List<Integer>> clauses;
-    private final Set<Integer> variables;
+    private List<List<Integer>> clauses;
+    private Set<Integer> variables;
     private File sourceFile;
     private double coverage;
     private static final Pattern CNF_PATTERN = Pattern.compile("p cnf (\\d+) (\\d+)");
@@ -32,6 +34,10 @@ public class CNF implements TestableInput {
     
     public CNF(List<List<Integer>> clauses, Set<Integer> variables) {
         this(clauses, variables, null);
+    }
+    
+    public CNF() {
+        this(new ArrayList<>(), new HashSet<>(), null);
     }
 
     public Set<Integer> getVariables() {
@@ -198,5 +204,45 @@ public class CNF implements TestableInput {
         
         // Variables range from 1 to size of the set
         return random.nextInt(variables.size()) + 1;
+    }
+
+    /**
+     * Makes the CNF valid by finding gaps in the variable
+     * names, and renaming all variables accordingly so that
+     * there are no gaps.
+     * It does not change the order in which variable indexes
+     * appear, but some variables will get removed.
+     */
+    public void consolidateVariables() {
+        Map<Integer, Integer> renamingMap = new HashMap<>();
+        List<List<Integer>> newClauses = new ArrayList<>();
+        Set<Integer> newVariables = new HashSet<>();
+        
+        // Create the renaming map
+        int i = 1;
+        for (Integer oldVariable : variables) {
+            renamingMap.put(Math.abs(oldVariable), i);
+            i++;
+        }
+        
+        // Populate the new clauses and new variables
+        for (List<Integer> oldClause : clauses) {
+            List<Integer> newClause = new ArrayList<>();
+            for (Integer aLit : oldClause) {
+                int oldVar = Math.abs(aLit);
+                Integer newVar = renamingMap.get(oldVar);
+                if (newVar == null) {
+                    throw new RuntimeException("CNF:consolidateVariables: no valid renaming entry for variable ["+oldVar+"]");
+                }
+                int newLit = aLit > 0 ? newVar : -newVar;
+                newClause.add(newLit);
+                newVariables.add(newVar);
+            }
+            newClauses.add(newClause);
+        }
+        
+        // Set
+        this.clauses = newClauses;
+        this.variables = newVariables;
     }
 }
